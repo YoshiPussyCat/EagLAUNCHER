@@ -1,168 +1,74 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>EagLauncher</title>
 <link rel="icon" type="image/png" href="./images/eaglercraft-game.png">
 <style>
+/* Force browser to never zoom this page */
+html { zoom: 1 !important; -ms-zoom: 1 !important; text-size-adjust: 100%; -webkit-text-size-adjust: 100%; }
+
 @font-face {
   font-family: 'Minecraft';
   src: url('./Fonts/Minecraft.ttf') format('truetype');
   font-weight: normal; font-style: normal;
 }
-
 :root {
   --font: 'Minecraft', monospace;
-  --sidebar:        #1c1c1c;
-  --sidebar-border: #2c2c2c;
-  --sidebar-text:   #c8c8c8;
-  --sidebar-hover:  #252525;
-  --sidebar-active: #1e2d1e;
-  --topbar:         #141414;
-  --topbar-border:  #282828;
-  --topbar-text:    #ffffff;
-  --card-bg:        rgba(0,0,0,0.68);
-  --card-border:    rgba(255,255,255,0.09);
-  --text:           #ffffff;
-  --text-muted:     #888888;
-  --input-bg:       #111111;
-  --input-border:   #333333;
-  --green:          #5aad5a;
-  --green-hover:    #6abf6a;
-  --green-dark:     #2e7d32;
-  --green-glow:     rgba(90,173,90,0.25);
-  --btn-bg:         rgba(255,255,255,0.06);
-  --btn-border:     rgba(255,255,255,0.12);
-  --btn-hover:      rgba(255,255,255,0.12);
-  --scrollbar:      #2a2a2a;
-  --overlay-dim:    rgba(0,0,0,0.45);
-  --settings-bg:    #0a0a0a;
-  --credits-bg:     #0a0a0a;
+  --sidebar: #1c1c1c; --sidebar-border: #2c2c2c; --sidebar-text: #c8c8c8;
+  --sidebar-hover: #252525; --sidebar-active: #1e2d1e;
+  --topbar: #141414; --topbar-border: #282828; --topbar-text: #ffffff;
+  --card-bg: rgba(0,0,0,0.68); --card-border: rgba(255,255,255,0.09);
+  --text: #ffffff; --text-muted: #888888;
+  --input-bg: #111111; --input-border: #333333;
+  --green: #5aad5a; --green-glow: rgba(90,173,90,0.25);
+  --btn-bg: rgba(255,255,255,0.06); --btn-border: rgba(255,255,255,0.12); --btn-hover: rgba(255,255,255,0.12);
+  --scrollbar: #2a2a2a; --overlay-dim: rgba(0,0,0,0.45); --settings-bg: #0a0a0a;
+  --credits-bg: #0a0a0a;
 }
-
 .light-mode {
-  --sidebar:        #b8b8b8;
-  --sidebar-border: #999999;
-  --sidebar-text:   #222222;
-  --sidebar-hover:  #aaaaaa;
-  --sidebar-active: #c8ddc8;
-  --topbar:         #a8a8a8;
-  --topbar-border:  #888888;
-  --topbar-text:    #111111;
-  --card-bg:        rgba(200,200,200,0.82);
-  --card-border:    rgba(0,0,0,0.18);
-  --text:           #111111;
-  --text-muted:     #444444;
-  --input-bg:       #d8d8d8;
-  --input-border:   #888888;
-  --btn-bg:         rgba(0,0,0,0.08);
-  --btn-border:     rgba(0,0,0,0.20);
-  --btn-hover:      rgba(0,0,0,0.14);
-  --scrollbar:      #999999;
-  --overlay-dim:    rgba(255,255,255,0.3);
-  --settings-bg:    #f0f0f0;
-  --credits-bg:     #f0f0f0;
+  --sidebar: #b8b8b8; --sidebar-border: #999; --sidebar-text: #222;
+  --sidebar-hover: #aaa; --sidebar-active: #c8ddc8;
+  --topbar: #a8a8a8; --topbar-border: #888; --topbar-text: #111;
+  --card-bg: rgba(200,200,200,0.82); --card-border: rgba(0,0,0,0.18);
+  --text: #111; --text-muted: #444;
+  --input-bg: #d8d8d8; --input-border: #888;
+  --btn-bg: rgba(0,0,0,0.08); --btn-border: rgba(0,0,0,0.20); --btn-hover: rgba(0,0,0,0.14);
+  --scrollbar: #999; --overlay-dim: rgba(255,255,255,0.3);
+  --settings-bg: #f0f0f0; --credits-bg: #f0f0f0;
 }
-
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; background:#000; }
-body { font-family:var(--font); transform-origin:top left; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+body{font-family:var(--font);transform-origin:top left;}
 
 /* ===================== LOADING ===================== */
-#loading-screen {
-  position:fixed; inset:0; z-index:9999;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  background:#000; overflow:hidden;
-  transition:opacity 1.2s ease;
-}
-#loading-screen.fade-out { opacity:0; pointer-events:none; }
-#load-bg {
-  position:absolute; inset:0;
-  background:url('./images/nostalgiaaa.png') center/cover no-repeat;
-  image-rendering:pixelated;
-  filter:brightness(0.28);
-}
-.load-content {
-  position:relative; z-index:2;
-  display:flex; flex-direction:column;
-  align-items:center; gap:28px;
-}
-#load-logo {
-  max-width:480px; width:80%;
-  image-rendering:pixelated;
-  filter:drop-shadow(0 0 28px rgba(90,173,90,0.45));
-  animation:logoPulse 2.2s ease-in-out infinite;
-}
-@keyframes logoPulse {
-  0%,100%{transform:scale(1);   filter:drop-shadow(0 0 16px rgba(90,173,90,0.3));}
-  50%    {transform:scale(1.013);filter:drop-shadow(0 0 36px rgba(90,173,90,0.7));}
-}
-.load-bar-wrap { width:480px; max-width:82vw; display:flex; flex-direction:column; gap:7px; transform:scale(1.2); transform-origin:center; }
-.load-bar-outer {
-  width:100%; height:22px;
-  background:#0c0c0c; border:3px solid #3c3c3c;
-  box-shadow:inset 0 2px 10px #000;
-  position:relative; overflow:hidden;
-}
-.load-bar-fill {
-  height:100%; width:0%;
-  background:linear-gradient(90deg,#1b5e20,#388e3c,#66bb6a,#a5d6a7,#66bb6a,#388e3c);
-  background-size:300% 100%;
-  animation:barAnim 2s linear infinite;
-  transition:width 0.12s linear;
-}
+#loading-screen{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#000;overflow:hidden;transition:opacity 1.2s ease;}
+#loading-screen.fade-out{opacity:0;pointer-events:none;}
+#load-bg{position:absolute;inset:0;background:url('./images/nostalgiaaa.png') center/cover no-repeat;image-rendering:pixelated;filter:brightness(0.28);}
+.load-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:28px;}
+#load-logo{max-width:480px;width:80%;image-rendering:pixelated;filter:drop-shadow(0 0 28px rgba(90,173,90,0.45));animation:logoPulse 2.2s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 16px rgba(90,173,90,0.3));}50%{transform:scale(1.013);filter:drop-shadow(0 0 36px rgba(90,173,90,0.7));}}
+.load-bar-wrap{width:480px;max-width:82vw;display:flex;flex-direction:column;gap:7px;transform:scale(1.2);transform-origin:center;}
+.load-bar-outer{width:100%;height:22px;background:#0c0c0c;border:3px solid #3c3c3c;box-shadow:inset 0 2px 10px #000;position:relative;overflow:hidden;}
+.load-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,#1b5e20,#388e3c,#66bb6a,#a5d6a7,#66bb6a,#388e3c);background-size:300% 100%;animation:barAnim 2s linear infinite;transition:width 0.12s linear;}
 @keyframes barAnim{0%{background-position:0%}100%{background-position:100%}}
 .load-bar-fill.shine{animation:barAnim .3s linear infinite,barShine .7s ease forwards;}
 @keyframes barShine{0%{filter:brightness(1);}45%{filter:brightness(2.6) saturate(1.5);box-shadow:0 0 40px #a5d6a7;}100%{filter:brightness(1.5);}}
-.load-bar-pct {
-  position:absolute; right:7px; top:50%; transform:translateY(-50%);
-  color:#fff; font-family:var(--font); font-size:10px;
-  text-shadow:1px 1px 2px #000; z-index:2;
-}
+.load-bar-pct{position:absolute;right:7px;top:50%;transform:translateY(-50%);color:#fff;font-family:var(--font);font-size:10px;text-shadow:1px 1px 2px #000;z-index:2;}
 .load-bar-status{color:#777;font-family:var(--font);font-size:9px;text-align:right;}
 
 /* ===================== LAUNCHER ===================== */
-#launcher {
-  display:none; width:100%; height:100%; flex-direction:row;
-}
+#launcher{display:none;width:100%;height:100%;flex-direction:row;}
 #launcher.visible{display:flex;}
-#bg {
-  position:absolute; inset:0;
-  background-size:cover; background-position:center;
-  image-rendering:pixelated;
-  transition:background-image 0.5s ease;
-  pointer-events:none; z-index:0;
-}
-#bg-dim {
-  position:absolute; inset:0;
-  background:var(--overlay-dim);
-  pointer-events:none; z-index:1;
-  transition:background 0.3s;
-}
+#bg{position:absolute;inset:0;background-size:cover;background-position:center;image-rendering:pixelated;transition:background-image 0.5s ease;pointer-events:none;z-index:0;}
+#bg-dim{position:absolute;inset:0;background:var(--overlay-dim);pointer-events:none;z-index:1;transition:background 0.3s;}
 
 /* ===================== SIDEBAR ===================== */
-#sidebar {
-  width:200px; min-width:200px; height:100%;
-  background:var(--sidebar);
-  border-right:2px solid var(--sidebar-border);
-  display:flex; flex-direction:column;
-  position:relative; z-index:10;
-  transition:width .26s cubic-bezier(.4,0,.2,1),
-             min-width .26s cubic-bezier(.4,0,.2,1),
-             opacity .22s;
-  overflow:hidden; flex-shrink:0;
-}
+#sidebar{width:200px;min-width:200px;height:100%;background:var(--sidebar);border-right:2px solid var(--sidebar-border);display:flex;flex-direction:column;position:relative;z-index:10;transition:width .26s cubic-bezier(.4,0,.2,1),min-width .26s cubic-bezier(.4,0,.2,1),opacity .22s;overflow:hidden;flex-shrink:0;}
 #sidebar.collapsed{width:0;min-width:0;opacity:0;pointer-events:none;}
 .sb-section{font-size:9px;color:var(--text-muted);padding:10px 13px 4px;letter-spacing:1px;white-space:nowrap;text-transform:uppercase;}
-.nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 13px;cursor:pointer;
-  color:var(--sidebar-text);font-size:11px;
-  transition:background .13s,color .13s;
-  white-space:nowrap;border-left:3px solid transparent;
-}
+.nav-item{display:flex;align-items:center;gap:9px;padding:10px 13px;cursor:pointer;color:var(--sidebar-text);font-size:11px;transition:background .13s,color .13s;white-space:nowrap;border-left:3px solid transparent;}
 .nav-item:hover{background:var(--sidebar-hover);color:var(--text);}
 .nav-item.active{background:var(--sidebar-active);color:var(--green);border-left-color:var(--green);}
 .nav-item img{width:18px;height:18px;object-fit:contain;image-rendering:pixelated;flex-shrink:0;filter:none;}
@@ -171,14 +77,7 @@ body { font-family:var(--font); transform-origin:top left; }
 .sb-version{padding:9px 13px;font-size:9px;color:var(--text-muted);white-space:nowrap;border-top:1px solid var(--sidebar-border);}
 
 /* ===================== TOPBAR ===================== */
-#topbar {
-  height:44px; background:var(--topbar);
-  border-bottom:2px solid var(--topbar-border);
-  display:flex; align-items:center;
-  padding:0 12px; gap:8px;
-  position:relative; z-index:10; flex-shrink:0;
-  width:100%;
-}
+#topbar{height:44px;background:var(--topbar);border-bottom:2px solid var(--topbar-border);display:flex;align-items:center;padding:0 12px;gap:8px;position:relative;z-index:10;flex-shrink:0;width:100%;}
 #menu-toggle{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:4px;padding:5px;flex-shrink:0;}
 #menu-toggle span{display:block;width:17px;height:2px;background:var(--topbar-text);transition:background .2s;}
 #menu-toggle:hover span{background:var(--green);}
@@ -189,17 +88,17 @@ body { font-family:var(--font); transform-origin:top left; }
 #music-pill .note{color:var(--green);font-size:11px;animation:noteSpin 2s linear infinite;}
 @keyframes noteSpin{0%{opacity:1}50%{opacity:0.4}100%{opacity:1}}
 #music-title-scroll{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px;color:var(--text-muted);}
-.tb-btn{
-  display:flex;align-items:center;gap:5px;
-  color:var(--topbar-text);font-size:10px;
-  cursor:pointer;padding:5px 9px;
-  border:1px solid var(--btn-border);background:var(--btn-bg);
-  transition:background .14s,border-color .14s,color .14s;
-  text-decoration:none;font-family:var(--font);white-space:nowrap;flex-shrink:0;
-}
+.tb-btn{display:flex;align-items:center;gap:5px;color:var(--topbar-text);font-size:10px;cursor:pointer;padding:5px 9px;border:1px solid var(--btn-border);background:var(--btn-bg);transition:background .14s,border-color .14s,color .14s;text-decoration:none;font-family:var(--font);white-space:nowrap;flex-shrink:0;}
 .tb-btn:hover{background:var(--btn-hover);border-color:var(--green);color:var(--green);}
 .tb-btn img{height:19px;object-fit:contain;image-rendering:pixelated;filter:none;}
 .tb-btn.icon-only{padding:4px 7px;}
+
+/* fav & account topbar buttons */
+#fav-topbar-btn{display:flex;align-items:center;gap:5px;color:var(--topbar-text);font-size:14px;cursor:pointer;padding:5px 9px;border:1px solid var(--btn-border);background:var(--btn-bg);transition:background .14s,border-color .14s,color .14s;font-family:var(--font);flex-shrink:0;}
+#fav-topbar-btn:hover{background:var(--btn-hover);border-color:#f9a825;color:#f9a825;}
+#account-topbar-btn{display:flex;align-items:center;gap:6px;color:var(--topbar-text);font-size:10px;cursor:pointer;padding:5px 9px;border:1px solid var(--btn-border);background:var(--btn-bg);transition:background .14s,border-color .14s;font-family:var(--font);white-space:nowrap;flex-shrink:0;}
+#account-topbar-btn:hover{background:var(--btn-hover);border-color:var(--green);}
+#account-topbar-btn img{height:20px;width:20px;object-fit:cover;image-rendering:pixelated;filter:none;}
 
 /* ===================== MAIN ===================== */
 #main-area{flex:1;display:flex;flex-direction:column;position:relative;z-index:5;min-width:0;overflow:hidden;}
@@ -236,29 +135,21 @@ body { font-family:var(--font); transform-origin:top left; }
 .sec-screen{display:none;flex-direction:column;flex:1;overflow-y:auto;padding:24px 28px;gap:18px;position:relative;}
 .sec-screen.visible{display:flex;}
 .sec-title{color:var(--text);font-size:16px;border-bottom:2px solid var(--card-border);padding-bottom:10px;text-shadow:0 0 18px var(--green-glow);flex-shrink:0;}
+#credits-screen{background:var(--credits-bg) !important;}
 
-/* ===================== CREDITS SCREEN ===================== */
-#credits-screen {
-  background:var(--credits-bg) !important;
-}
-
-/* ===================== CREDITS TABS ===================== */
+/* credits tabs */
 .cred-tabs{display:flex;gap:0;border-bottom:2px solid var(--card-border);flex-shrink:0;}
 .cred-tab{padding:8px 14px;font-family:var(--font);font-size:10px;color:var(--text-muted);cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .14s,border-color .14s;white-space:nowrap;}
 .cred-tab:hover{color:var(--text);}
 .cred-tab.active{color:var(--green);border-bottom-color:var(--green);}
 .cred-panel{display:none;flex-direction:column;gap:12px;}
 .cred-panel.visible{display:flex;}
-
-/* credit cards */
 .credit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
 .credit-card{background:var(--card-bg);border:2px solid var(--card-border);backdrop-filter:blur(10px);padding:14px 16px;display:flex;flex-direction:column;gap:7px;transition:border-color .2s,transform .2s;}
 .credit-card:hover{border-color:var(--green);transform:translateY(-2px);}
 .credit-name{color:var(--text);font-size:12px;}
 .credit-quote{color:var(--green);font-size:9px;font-style:italic;}
 .credit-desc{color:var(--text-muted);font-size:9px;line-height:1.8;}
-
-/* news/changelog */
 .news-list{display:flex;flex-direction:column;gap:12px;}
 .news-entry{background:var(--card-bg);border:2px solid var(--card-border);backdrop-filter:blur(10px);padding:14px 16px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
 .news-entry:hover{border-color:var(--green);}
@@ -266,7 +157,7 @@ body { font-family:var(--font); transform-origin:top left; }
 .news-items{display:flex;flex-direction:column;gap:5px;}
 .news-item{color:var(--text-muted);font-size:9px;line-height:1.8;padding-left:8px;}
 
-/* ===================== SETTINGS ===================== */
+/* settings */
 .settings-body{display:flex;flex-direction:column;gap:22px;max-width:660px;}
 .cat-tabs{display:flex;gap:0;flex-wrap:nowrap;border-bottom:2px solid var(--card-border);flex-shrink:0;}
 .cat-tab{padding:9px 14px;font-family:var(--font);font-size:10px;color:var(--text-muted);cursor:pointer;background:transparent;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s;white-space:nowrap;}
@@ -295,8 +186,8 @@ body { font-family:var(--font); transform-origin:top left; }
 .music-controls{display:flex;gap:7px;align-items:center;}
 .music-vol-row{display:flex;align-items:center;gap:8px;}
 .music-vol-lbl{color:var(--text-muted);font-size:9px;white-space:nowrap;}
-.acc-btn{background:var(--input-bg);border:2px solid var(--input-border);color:var(--text);font-family:var(--font);font-size:10px;padding:9px 12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;transition:border-color .14s;}
-.acc-btn:hover{border-color:var(--green);}
+.acc-btn-row{background:var(--input-bg);border:2px solid var(--input-border);color:var(--text);font-family:var(--font);font-size:10px;padding:9px 12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;transition:border-color .14s;}
+.acc-btn-row:hover{border-color:var(--green);}
 .acc-body{display:none;background:var(--input-bg);border:2px solid var(--input-border);border-top:none;padding:13px 15px;color:var(--text-muted);font-size:9px;line-height:2.2;max-height:240px;overflow-y:auto;}
 .acc-body.open{display:block;}
 .acc-body h4{color:var(--green);margin:10px 0 5px;font-size:9px;}
@@ -325,118 +216,120 @@ body { font-family:var(--font); transform-origin:top left; }
 /* ===================== MODAL BASE ===================== */
 .modal-overlay{
   position:fixed;inset:0;z-index:800;
-  background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);
   display:none;align-items:center;justify-content:center;
-  animation:ovIn .35s ease;
 }
 .modal-overlay.open{display:flex;}
 .modal-box{
   background:var(--sidebar);
   border:2px solid var(--sidebar-border);
   padding:24px 28px;
-  display:flex;flex-direction:column;gap:16px;
-  width:380px;max-width:92vw;
+  display:flex;flex-direction:column;gap:14px;
+  width:420px;max-width:94vw;
   position:relative;
   animation:modalIn .2s ease;
-}
-@keyframes modalIn{from{transform:scale(0.93);opacity:0}to{transform:scale(1);opacity:1}}
-.modal-title{color:var(--text);font-size:14px;border-bottom:1px solid var(--sidebar-border);padding-bottom:10px;}
-.modal-desc{color:var(--text-muted);font-size:9px;line-height:1.9;}
-.modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text-muted);font-family:var(--font);font-size:14px;cursor:pointer;}
-.modal-close:hover{color:var(--text);}
-.modal-field{display:flex;flex-direction:column;gap:6px;}
-.modal-field label{color:var(--text-muted);font-size:9px;}
-.modal-field input{background:var(--input-bg);border:2px solid var(--input-border);color:var(--text);font-family:var(--font);font-size:11px;padding:8px 10px;outline:none;width:100%;transition:border-color .14s;}
-.modal-field input:focus{border-color:var(--green);}
-.modal-btn{padding:9px 14px;font-family:var(--font);font-size:10px;border:2px solid var(--green);background:rgba(90,173,90,0.1);color:var(--green);cursor:pointer;transition:all .14s;text-align:center;}
-.modal-btn:hover{background:rgba(90,173,90,0.2);}
-.modal-btn.secondary{border-color:var(--input-border);background:var(--input-bg);color:var(--text-muted);}
-.modal-btn.secondary:hover{border-color:var(--text-muted);}
-.modal-row{display:flex;gap:8px;}
-
-/* account avatar picker */
-.avatar-row{display:flex;align-items:center;gap:12px;}
-.avatar-preview{width:48px;height:48px;object-fit:cover;image-rendering:pixelated;border:2px solid var(--input-border);cursor:pointer;flex-shrink:0;filter:none;}
-.avatar-preview:hover{border-color:var(--green);}
-.avatar-hint{color:var(--text-muted);font-size:8px;line-height:1.8;}
-
-/* ===================== ACCOUNT DROPDOWN ===================== */
-#account-dd-wrap{position:relative;flex-shrink:0;}
-#account-btn{
-  display:flex;align-items:center;gap:6px;
-  color:var(--topbar-text);font-size:10px;
-  cursor:pointer;padding:5px 9px;
-  border:1px solid var(--btn-border);background:var(--btn-bg);
-  transition:background .14s,border-color .14s;
-  font-family:var(--font);white-space:nowrap;
-}
-#account-btn:hover{background:var(--btn-hover);border-color:var(--green);}
-#account-btn img{height:19px;width:19px;object-fit:cover;image-rendering:pixelated;border-radius:0;filter:none;}
-#account-dd{
-  display:none;position:fixed;
-  background:var(--sidebar);border:2px solid var(--sidebar-border);
-  min-width:180px;z-index:9999;
-  max-height:160px;
+  max-height:90vh;
   overflow-y:auto;
 }
-#account-dd.open{display:block;}
-.acc-dd-item{
-  padding:10px 12px;font-family:var(--font);font-size:8px;
-  color:var(--sidebar-text);cursor:pointer;
-  border-bottom:1px solid var(--sidebar-border);
-  transition:background .12s,color .12s;white-space:normal;
-  line-height:1.4;
-}
-.acc-dd-item:last-child{border-bottom:none;}
-.acc-dd-item:hover{background:var(--sidebar-hover);color:var(--green);}
+@keyframes modalIn{from{transform:scale(0.93);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--sidebar-border);padding-bottom:10px;}
+.modal-title{color:var(--green);font-size:13px;letter-spacing:0.5px;}
+.modal-close{background:none;border:none;color:var(--text-muted);font-family:var(--font);font-size:14px;cursor:pointer;padding:2px 6px;transition:color .14s;}
+.modal-close:hover{color:var(--text);}
+.modal-desc{color:var(--text-muted);font-size:9px;line-height:1.9;}
+.modal-field{display:flex;flex-direction:column;gap:6px;}
+.modal-field label{color:var(--text-muted);font-size:9px;letter-spacing:0.5px;}
+.modal-field input{background:var(--input-bg);border:2px solid var(--input-border);color:var(--text);font-family:var(--font);font-size:11px;padding:8px 10px;outline:none;width:100%;transition:border-color .14s;}
+.modal-field input:focus{border-color:var(--green);}
+.modal-btn{padding:9px 14px;font-family:var(--font);font-size:10px;border:2px solid var(--green);background:rgba(90,173,90,0.1);color:var(--green);cursor:pointer;transition:all .14s;text-align:center;width:100%;}
+.modal-btn:hover{background:rgba(90,173,90,0.22);}
+.modal-btn.secondary{border-color:var(--input-border);background:var(--input-bg);color:var(--text-muted);}
+.modal-btn.secondary:hover{border-color:var(--text-muted);color:var(--text);}
+.modal-btn.danger{border-color:#e57373;background:rgba(229,115,115,0.1);color:#e57373;}
+.modal-btn.danger:hover{background:rgba(229,115,115,0.22);}
+.modal-row{display:flex;gap:8px;}
+.modal-err{color:#e57373;font-size:9px;display:none;padding:4px 0;}
 
-/* ===================== FAVOURITES DROPDOWN ===================== */
-#fav-btn{
-  display:flex;align-items:center;gap:5px;
-  color:var(--topbar-text);font-size:14px;
-  cursor:pointer;padding:5px 9px;
-  border:1px solid var(--btn-border);background:var(--btn-bg);
-  transition:background .14s,border-color .14s;
-  font-family:var(--font);flex-shrink:0;
+/* avatar picker */
+.avatar-row{display:flex;align-items:center;gap:14px;}
+.avatar-preview{width:56px;height:56px;object-fit:cover;image-rendering:pixelated;border:2px solid var(--input-border);cursor:pointer;flex-shrink:0;filter:none;transition:border-color .14s;}
+.avatar-preview:hover{border-color:var(--green);}
+.avatar-hint{color:var(--text-muted);font-size:8px;line-height:1.9;}
+
+/* account manager view states */
+.acc-view{display:none;flex-direction:column;gap:14px;}
+.acc-view.visible{display:flex;}
+
+/* logged in account info box */
+.acc-info-box{display:flex;align-items:center;gap:14px;padding:12px;background:var(--input-bg);border:2px solid var(--input-border);}
+.acc-info-box img{width:52px;height:52px;object-fit:cover;image-rendering:pixelated;border:2px solid var(--green);filter:none;}
+.acc-info-text{display:flex;flex-direction:column;gap:4px;}
+.acc-info-name{color:var(--text);font-size:13px;}
+.acc-info-sub{color:var(--text-muted);font-size:8px;}
+.acc-pass-reveal{color:var(--green);font-size:9px;padding:6px 10px;background:var(--input-bg);border:1px solid var(--input-border);display:none;word-break:break-all;line-height:1.8;}
+
+/* favourites modal */
+.fav-modal-box{width:460px;max-width:94vw;max-height:82vh;overflow:hidden;display:flex;flex-direction:column;gap:10px;}
+.fav-section-header{font-size:9px;color:var(--text-muted);letter-spacing:1px;padding:8px 0 4px;border-bottom:1px solid var(--card-border);}
+.fav-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.fav-opt{padding:7px 10px;font-size:9px;font-family:var(--font);background:var(--input-bg);border:2px solid var(--input-border);color:var(--text-muted);cursor:pointer;transition:all .13s;display:flex;align-items:center;gap:7px;text-align:left;}
+.fav-opt img{width:18px;height:18px;object-fit:contain;image-rendering:pixelated;flex-shrink:0;filter:none;}
+.fav-opt:hover{border-color:var(--sidebar-text);color:var(--text);}
+.fav-opt.starred{background:rgba(90,173,90,0.15);border-color:var(--green);color:var(--green);}
+.fav-opt .star-icon{margin-left:auto;font-size:10px;color:#f9a825;opacity:0;flex-shrink:0;}
+.fav-opt.starred .star-icon{opacity:1;}
+.fav-scroll{flex:1;overflow-y:auto;padding-right:2px;}
+
+/* favourites dropdown edit mode */
+.fav-dd-wrap{display:flex;flex-direction:column;gap:6px;margin:6px 0 8px;position:relative;}
+.fav-dd-head{
+  width:100%;
+  background:var(--input-bg);
+  border:2px solid var(--input-border);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:10px;
+  padding:7px 9px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.fav-dd-head img{width:14px;height:14px;object-fit:contain;image-rendering:pixelated;filter:none;flex-shrink:0;}
+.fav-dd-head .arrow{margin-left:auto;color:var(--text-muted);font-size:9px;}
+.fav-dd-head.open{border-color:var(--green);}
+.fav-dd-list{
+  display:none;
   position:relative;
+  background:var(--input-bg);
+  border:2px solid var(--input-border);
+  max-height:146px;
+  overflow-y:auto;
 }
-#fav-btn:hover{background:var(--btn-hover);border-color:#f9a825;color:#f9a825;}
-
-#fav-dd-wrap{position:relative;flex-shrink:0;}
-#fav-dd{
-  display:none;position:fixed;
-  background:var(--sidebar);border:2px solid var(--sidebar-border);
-  min-width:210px;max-height:300px;overflow-y:auto;z-index:9999;
-}
-#fav-dd.open{display:flex;flex-direction:column;}
-.fav-dd-header{
-  padding:10px 12px;font-family:var(--font);font-size:9px;
-  color:var(--text-muted);border-bottom:1px solid var(--sidebar-border);
-  display:flex;justify-content:space-between;align-items:center;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-.fav-dd-header button{
-  background:var(--input-bg);border:1px solid var(--input-border);color:var(--green);
-  font-family:var(--font);font-size:8px;padding:3px 8px;cursor:pointer;transition:all .12s;
-  white-space:nowrap;
-}
-.fav-dd-header button:hover{border-color:var(--green);}
+.fav-dd-list.open{display:block;}
 .fav-dd-item{
-  padding:10px 12px;font-family:var(--font);font-size:8px;
-  color:var(--sidebar-text);cursor:pointer;
-  border-bottom:1px solid var(--sidebar-border);
-  transition:background .12s,color .12s;display:flex;align-items:center;gap:6px;
-  white-space:nowrap;
+  width:100%;
+  border:none;
+  border-bottom:1px solid var(--card-border);
+  background:transparent;
+  color:var(--text-muted);
+  font-family:var(--font);
+  font-size:9px;
+  text-align:left;
+  padding:6px 8px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
 }
-.fav-dd-item:hover{background:var(--sidebar-hover);color:var(--green);}
-.fav-dd-item img{width:14px;height:14px;object-fit:contain;image-rendering:pixelated;flex-shrink:0;filter:none;}
-.fav-dd-item .fav-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:8px;}
-.fav-dd-play{padding:2px 6px;background:rgba(90,173,90,0.1);border:1px solid var(--green);color:var(--green);font-family:var(--font);font-size:8px;cursor:pointer;transition:all .12s;flex-shrink:0;white-space:nowrap;}
-.fav-dd-play:hover{background:rgba(90,173,90,0.2);}
-.fav-dd-empty{padding:10px;color:var(--text-muted);font-size:8px;text-align:center;white-space:nowrap;}
+.fav-dd-item:last-child{border-bottom:none;}
+.fav-dd-item img{width:14px;height:14px;object-fit:contain;image-rendering:pixelated;filter:none;flex-shrink:0;}
+.fav-dd-item:hover{background:var(--sidebar-hover);color:var(--text);}
+.fav-dd-item.selected{color:var(--green);background:rgba(90,173,90,0.12);}
+.fav-dd-item .star{margin-left:auto;color:#f9a825;font-size:9px;opacity:0;}
+.fav-dd-item.selected .star{opacity:1;}
 
-/* ===================== SCROLLBAR ===================== */
+/* scrollbar */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--scrollbar);}
@@ -453,7 +346,7 @@ body { font-family:var(--font); transform-origin:top left; }
     <div class="load-bar-wrap">
       <div class="load-bar-outer">
         <div class="load-bar-fill" id="bar-fill"></div>
-        <div class="load-bar-pct"  id="bar-pct">0%</div>
+        <div class="load-bar-pct" id="bar-pct">0%</div>
       </div>
       <div class="load-bar-status" id="bar-status">Initializing...</div>
     </div>
@@ -488,8 +381,6 @@ body { font-family:var(--font); transform-origin:top left; }
 
   <!-- MAIN -->
   <div id="main-area">
-
-    <!-- TOPBAR -->
     <div id="topbar">
       <button id="menu-toggle" onclick="toggleSb()"><span></span><span></span><span></span></button>
       <div id="topbar-brand">
@@ -500,29 +391,11 @@ body { font-family:var(--font); transform-origin:top left; }
         <span class="note">♪</span>
         <span id="music-title-scroll">Loading...</span>
       </div>
-      <!-- FAVOURITES DROPDOWN -->
-      <div id="fav-dd-wrap">
-        <button id="fav-btn" onclick="toggleFavDd()" title="Favourites">★</button>
-        <div id="fav-dd">
-          <div class="fav-dd-header">
-            <span>FAVOURITES</span>
-            <button onclick="editFavourites()">EDIT</button>
-          </div>
-          <div id="fav-dd-list"></div>
-        </div>
-      </div>
-      <!-- ACCOUNT -->
-      <div id="account-dd-wrap">
-        <button id="account-btn" onclick="toggleAccDd()">
-          <img id="account-icon" src="./images/thumba.png" alt="">
-          <span id="account-label">Guest</span>
-        </button>
-        <div id="account-dd">
-          <div class="acc-dd-item" id="acc-create-btn" onclick="openCreateAcc()">Create a launcher account</div>
-          <div class="acc-dd-item" id="acc-enter-btn"  onclick="openEnterAcc()">Enter a launcher account</div>
-          <div class="acc-dd-item" id="acc-logout-btn" style="display:none;color:#e57373;" onclick="logoutAcc()">Exit account</div>
-        </div>
-      </div>
+      <button id="fav-topbar-btn" onclick="openFavModal()" title="Favourites">★</button>
+      <button id="account-topbar-btn" onclick="openAccModal()">
+        <img id="account-icon" src="./images/thumba.png" alt="">
+        <span id="account-label">Guest</span>
+      </button>
     </div>
 
     <!-- GAME SCREEN -->
@@ -543,14 +416,13 @@ body { font-family:var(--font); transform-origin:top left; }
       <div id="game-footer">eaglercraft • open source minecraft in your browser</div>
     </div>
 
-    <!-- CREDITS SCREEN -->
+    <!-- CREDITS -->
     <div class="sec-screen" id="credits-screen">
       <div class="sec-title">✦ CREDITS</div>
       <div class="cred-tabs">
         <button class="cred-tab active" onclick="showCredTab(this,'cred-people')">PEOPLE</button>
         <button class="cred-tab"        onclick="showCredTab(this,'cred-news')">NEWS</button>
       </div>
-      <!-- PEOPLE -->
       <div class="cred-panel visible" id="cred-people">
         <div class="credit-grid">
           <div class="credit-card"><div class="credit-name">30gato_Yoshi</div><div class="credit-quote">"im a pop cat"</div><div class="credit-desc">Made this shortcut launcher!</div></div>
@@ -561,38 +433,16 @@ body { font-family:var(--font); transform-origin:top left; }
           <div class="credit-card"><div class="credit-name">EymenWSMC</div><div class="credit-quote">"community builder"</div><div class="credit-desc">Major contributor to the Eaglercraft community.</div></div>
         </div>
       </div>
-      <!-- NEWS -->
       <div class="cred-panel" id="cred-news">
         <div class="news-list">
-          <div class="news-entry">
-            <div class="news-version">v2.0 | ACCOUNT MANAGER</div>
-            <div class="news-items">
-              <div class="news-item">- Inserted account creator to save settings and preferences</div>
-              <div class="news-item">- Added new icons and web things</div>
-              <div class="news-item">- Tiny fixes and moves</div>
-              <div class="news-item">- Favourite option added to versions</div>
-              <div class="news-item">- And more!</div>
-            </div>
-          </div>
-          <div class="news-entry">
-            <div class="news-version">v1.5 | GITHUB INTRO</div>
-            <div class="news-items">
-              <div class="news-item">- Launcher was published in GitHub</div>
-              <div class="news-item">- Bug fixes on certain areas</div>
-              <div class="news-item">- Introduction for some small settings</div>
-            </div>
-          </div>
-          <div class="news-entry">
-            <div class="news-version">v1.0 | RELEASE DATE</div>
-            <div class="news-items">
-              <div class="news-item">- First release of the launcher</div>
-            </div>
-          </div>
+          <div class="news-entry"><div class="news-version">v2.0 | ACCOUNT MANAGER</div><div class="news-items"><div class="news-item">- Inserted account creator to save settings and preferences</div><div class="news-item">- Added new icons and web things</div><div class="news-item">- Tiny fixes and moves</div><div class="news-item">- Favourite option added to versions</div><div class="news-item">- And more!</div></div></div>
+          <div class="news-entry"><div class="news-version">v1.5 | GITHUB INTRO</div><div class="news-items"><div class="news-item">- Launcher was published in GitHub</div><div class="news-item">- Bug fixes on certain areas</div><div class="news-item">- Introduction for some small settings</div></div></div>
+          <div class="news-entry"><div class="news-version">v1.0 | RELEASE DATE</div><div class="news-items"><div class="news-item">- First release of the launcher</div></div></div>
         </div>
       </div>
     </div>
 
-    <!-- SETTINGS SCREEN -->
+    <!-- SETTINGS -->
     <div class="sec-screen" id="settings-screen">
       <div class="sec-title">⚙ SETTINGS</div>
       <div class="cat-tabs">
@@ -601,344 +451,250 @@ body { font-family:var(--font); transform-origin:top left; }
         <button class="cat-tab"        onclick="showCat('music')">MUSIC</button>
         <button class="cat-tab"        onclick="showCat('about')">ABOUT</button>
       </div>
-      <!-- GENERAL -->
       <div class="cat-panel visible" id="cat-general">
         <div class="settings-body">
-          <div class="s-card">
-            <div class="s-lbl">✏ LAUNCHER NAME</div>
-            <div class="s-desc">Shown in the top bar.</div>
-            <input class="s-input" id="name-inp" type="text" value="EagLauncher" oninput="setName(this.value)" maxlength="40">
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">🪟 OPEN GAME IN NEW TAB</div>
-            <div class="s-desc">When ON, clicking PLAY opens in a new browser tab instead of navigating away.</div>
-            <div class="tog-grp">
-              <button class="tog on" id="t-no"  onclick="setWin(false)">OFF</button>
-              <button class="tog"    id="t-yes" onclick="setWin(true)">ON</button>
-            </div>
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">📌 SIDEBAR ON STARTUP</div>
-            <div class="s-desc">Whether the sidebar starts open or closed.</div>
-            <div class="tog-grp">
-              <button class="tog on" id="t-sbo" onclick="setSbDef('open')">OPEN</button>
-              <button class="tog"    id="t-sbc" onclick="setSbDef('closed')">CLOSED</button>
-            </div>
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">🖱 CLICK SOUNDS</div>
-            <div class="s-desc">Plays the Minecraft click sound on button presses.</div>
-            <div class="tog-grp">
-              <button class="tog on" id="t-sfx-on"  onclick="setSfx(true)">ON</button>
-              <button class="tog"    id="t-sfx-off" onclick="setSfx(false)">OFF</button>
-            </div>
-          </div>
+          <div class="s-card"><div class="s-lbl">✏ LAUNCHER NAME</div><div class="s-desc">Shown in the top bar.</div><input class="s-input" id="name-inp" type="text" value="EagLauncher" oninput="setName(this.value)" maxlength="40"></div>
+          <div class="s-card"><div class="s-lbl">🪟 OPEN GAME IN NEW TAB</div><div class="s-desc">When ON, clicking PLAY opens in a new browser tab.</div><div class="tog-grp"><button class="tog on" id="t-no" onclick="setWin(false)">OFF</button><button class="tog" id="t-yes" onclick="setWin(true)">ON</button></div></div>
+          <div class="s-card"><div class="s-lbl">📌 SIDEBAR ON STARTUP</div><div class="s-desc">Whether the sidebar starts open or closed.</div><div class="tog-grp"><button class="tog on" id="t-sbo" onclick="setSbDef('open')">OPEN</button><button class="tog" id="t-sbc" onclick="setSbDef('closed')">CLOSED</button></div></div>
+          <div class="s-card"><div class="s-lbl">🖱 CLICK SOUNDS</div><div class="s-desc">Plays the Minecraft click sound on button presses.</div><div class="tog-grp"><button class="tog on" id="t-sfx-on" onclick="setSfx(true)">ON</button><button class="tog" id="t-sfx-off" onclick="setSfx(false)">OFF</button></div></div>
         </div>
       </div>
-      <!-- DISPLAY -->
       <div class="cat-panel" id="cat-display">
         <div class="settings-body">
-          <div class="s-card">
-            <div class="s-lbl">🎨 THEME</div>
-            <div class="s-desc">Change the launcher color theme.</div>
-            <div class="tog-grp">
-              <button class="tog on" id="t-dark"  onclick="setTheme('dark')">DARK</button>
-              <button class="tog"    id="t-light" onclick="setTheme('light')">LIGHT</button>
-            </div>
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">🔍 ZOOM LEVEL</div>
-            <div class="s-desc">Scales the launcher layout. Works like Ctrl+scroll.</div>
-            <div class="range-row">
-              <input type="range" class="s-range" id="zoom-sl" min="50" max="180" value="120" oninput="setZoom(this.value)">
-              <div class="range-v" id="zoom-v">120%</div>
-            </div>
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">💨 BACKGROUND OPACITY</div>
-            <div class="s-desc">How dark the overlay on top of the background image is. Lower = more visible background.</div>
-            <div class="range-row">
-              <input type="range" class="s-range" id="dim-sl" min="0" max="80" value="45" oninput="setBgDim(this.value)">
-              <div class="range-v" id="dim-v">45%</div>
-            </div>
-          </div>
-          <div class="s-card">
-            <div class="s-lbl">📊 FPS COUNTER</div>
-            <div class="s-desc">Shows a live FPS overlay in the top-right corner.</div>
-            <div class="tog-grp">
-              <button class="tog"    id="t-fps-off" onclick="setFps(false)">OFF</button>
-              <button class="tog on" id="t-fps-on"  onclick="setFps(true)">ON</button>
-            </div>
-          </div>
+          <div class="s-card"><div class="s-lbl">🎨 THEME</div><div class="s-desc">Change the launcher color theme.</div><div class="tog-grp"><button class="tog on" id="t-dark" onclick="setTheme('dark')">DARK</button><button class="tog" id="t-light" onclick="setTheme('light')">LIGHT</button></div></div>
+          <div class="s-card"><div class="s-lbl">🔍 ZOOM LEVEL</div><div class="s-desc">Scales the launcher layout. Works like Ctrl+scroll.</div><div class="range-row"><input type="range" class="s-range" id="zoom-sl" min="50" max="180" value="120" oninput="setZoom(this.value)"><div class="range-v" id="zoom-v">120%</div></div></div>
+          <div class="s-card"><div class="s-lbl">💨 BACKGROUND OPACITY</div><div class="s-desc">How dark the overlay on top of the background image is.</div><div class="range-row"><input type="range" class="s-range" id="dim-sl" min="0" max="80" value="45" oninput="setBgDim(this.value)"><div class="range-v" id="dim-v">45%</div></div></div>
+          <div class="s-card"><div class="s-lbl">📊 FPS COUNTER</div><div class="s-desc">Shows a live FPS overlay in the top-right corner.</div><div class="tog-grp"><button class="tog" id="t-fps-off" onclick="setFps(false)">OFF</button><button class="tog on" id="t-fps-on" onclick="setFps(true)">ON</button></div></div>
         </div>
       </div>
-      <!-- MUSIC -->
       <div class="cat-panel" id="cat-music">
         <div class="settings-body">
-          <div class="s-card">
-            <div class="s-lbl">🎵 BACKGROUND MUSIC</div>
-            <div class="s-desc">Controls the Minecraft music that plays in the launcher.</div>
+          <div class="s-card"><div class="s-lbl">🎵 BACKGROUND MUSIC</div><div class="s-desc">Controls the Minecraft music that plays in the launcher.</div>
             <div class="music-player">
-              <div class="music-track-row">
-                <button class="music-prev" onclick="musicPrev()">◀</button>
-                <div class="music-track-name" id="music-track-name">Loading...</div>
-                <button class="music-next" onclick="musicNext()">▶</button>
-              </div>
-              <div class="music-controls">
-                <button class="tog on" id="t-mus-on"  onclick="setMusicOn(true)">PLAY</button>
-                <button class="tog"    id="t-mus-off" onclick="setMusicOn(false)">PAUSE</button>
-              </div>
-              <div class="music-vol-row">
-                <div class="music-vol-lbl">VOLUME</div>
-                <input type="range" class="s-range" id="vol-sl" min="0" max="100" value="60" style="flex:1" oninput="setVol(this.value)">
-                <div class="range-v" id="vol-v">60%</div>
-              </div>
-              <div class="tog-grp">
-                <button class="tog on" id="t-shuf-off" onclick="setShuffle(false)">IN ORDER</button>
-                <button class="tog"    id="t-shuf-on"  onclick="setShuffle(true)">SHUFFLE</button>
-              </div>
+              <div class="music-track-row"><button class="music-prev" onclick="musicPrev()">◀</button><div class="music-track-name" id="music-track-name">Loading...</div><button class="music-next" onclick="musicNext()">▶</button></div>
+              <div class="music-controls"><button class="tog on" id="t-mus-on" onclick="setMusicOn(true)">PLAY</button><button class="tog" id="t-mus-off" onclick="setMusicOn(false)">PAUSE</button></div>
+              <div class="music-vol-row"><div class="music-vol-lbl">VOLUME</div><input type="range" class="s-range" id="vol-sl" min="0" max="100" value="60" style="flex:1" oninput="setVol(this.value)"><div class="range-v" id="vol-v">60%</div></div>
+              <div class="tog-grp"><button class="tog on" id="t-shuf-off" onclick="setShuffle(false)">IN ORDER</button><button class="tog" id="t-shuf-on" onclick="setShuffle(true)">SHUFFLE</button></div>
             </div>
           </div>
         </div>
       </div>
-      <!-- ABOUT -->
       <div class="cat-panel" id="cat-about">
         <div class="settings-body">
-          <div class="s-card">
-            <div class="s-lbl">📖 ABOUT EAGLERCRAFT</div>
-            <button class="acc-btn" onclick="toggleAcc('acc1')"><span>What is Eaglercraft?</span><span id="arr-acc1">▼</span></button>
-            <div class="acc-body" id="acc1">
-              <h4>What is Eaglercraft?</h4>
-              <p>Eaglercraft is an open source Minecraft that you can play in any regular web browser. That includes school chromebooks. You can join real Minecraft 1.5.2 servers with it through a custom proxy plugin developed for Bungeecord and Velocity.</p>
-              <h4>How does it work?</h4>
-              <p>Eaglercraft uses the launcher assets of the official version of Minecraft direct from Mojang to compile it to Javascript using TeaVM. A custom compatibility layer by LAX1DUDE allows the OpenGL 1.3 rendering engine to operate through an HTML5 WebGL canvas.</p>
-              <h4>Is this legal?</h4>
-              <p>Yes. All assets protected by DMCA are not hosted by Eaglercraft — they are acquired directly from Mojang's public servers, exactly like the original Minecraft Launcher does.</p>
-              <h4>Who made it?</h4>
-              <p>LAX1DUDE created Eaglercraft in late 2021 (first stable build February 2022). Ayunami2000 contributed heavily. PeytonPlayz595, EymenWSMC, and radmanplays ported other Minecraft versions.</p>
-            </div>
+          <div class="s-card"><div class="s-lbl">📖 ABOUT EAGLERCRAFT</div>
+            <button class="acc-btn-row" onclick="toggleAcc('acc1')"><span>What is Eaglercraft?</span><span id="arr-acc1">▼</span></button>
+            <div class="acc-body" id="acc1"><h4>What is Eaglercraft?</h4><p>Eaglercraft is an open source Minecraft that you can play in any regular web browser. That includes school chromebooks. You can join real Minecraft 1.5.2 servers with it through a custom proxy plugin developed for Bungeecord and Velocity.</p><h4>How does it work?</h4><p>Eaglercraft uses the launcher assets of the official version of Minecraft direct from Mojang to compile it to Javascript using TeaVM. A custom compatibility layer by LAX1DUDE allows the OpenGL 1.3 rendering engine to operate through an HTML5 WebGL canvas.</p><h4>Is this legal?</h4><p>Yes. All assets protected by DMCA are not hosted by Eaglercraft — they are acquired directly from Mojang's public servers, exactly like the original Minecraft Launcher does.</p><h4>Who made it?</h4><p>LAX1DUDE created Eaglercraft in late 2021 (first stable build February 2022). Ayunami2000 contributed heavily. PeytonPlayz595, EymenWSMC, and radmanplays ported other Minecraft versions.</p></div>
           </div>
-          <div class="s-card">
-            <div class="s-lbl">🚀 LAUNCHER INFO</div>
-            <button class="acc-btn" onclick="toggleAcc('acc2')"><span>About this launcher</span><span id="arr-acc2">▼</span></button>
-            <div class="acc-body" id="acc2">
-              <h4>EagLauncher v2.0</h4>
-              <p>A custom single-file HTML launcher for Eaglercraft, made by 30gato_Yoshi. Inspired by Ampler Launcher by irv77.</p>
-              <h4>Credits to irv77</h4>
-              <p>Most of the game links and launch URLs in this launcher come directly from Ampler Launcher by irv77. He did incredible hard work building that launcher, and this project would not exist without his effort and dedication. Big respect!</p>
-              <h4>Features</h4>
-              <p>Web, Modded and Controls editions • 12 web versions • 7 modded clients • Minecraft music player • Light/Dark theme • Zoom control • Click sounds • FPS counter • Accounts • Favourites</p>
-            </div>
+          <div class="s-card"><div class="s-lbl">🚀 LAUNCHER INFO</div>
+            <button class="acc-btn-row" onclick="toggleAcc('acc2')"><span>About this launcher</span><span id="arr-acc2">▼</span></button>
+            <div class="acc-body" id="acc2"><h4>EagLauncher v2.0</h4><p>A custom single-file HTML launcher for Eaglercraft, made by 30gato_Yoshi. Inspired by Ampler Launcher by irv77.</p><h4>Credits to irv77</h4><p>Most of the game links and launch URLs in this launcher come directly from Ampler Launcher by irv77. He did incredible hard work building that launcher, and this project would not exist without his effort and dedication. Big respect!</p><h4>Features</h4><p>Web, Modded and Controls editions • 12 web versions • 7 modded clients • Minecraft music player • Light/Dark theme • Zoom control • Click sounds • FPS counter • Accounts • Favourites</p></div>
           </div>
         </div>
       </div>
     </div>
-
-  </div><!-- /main-area -->
-</div><!-- /launcher -->
+  </div>
+</div>
 
 <!-- LAUNCH OVERLAY -->
 <div id="launch-overlay">
   <div id="launch-txt">Launching Eaglercraft,<br>be ready!</div>
   <div class="l-dots"><span></span><span></span><span></span></div>
 </div>
-
-<!-- FPS -->
 <div id="fps-ctr">60 FPS</div>
-
-<!-- AUDIO -->
 <audio id="audio-player" preload="auto"></audio>
 <audio id="sfx-click" src="./SFX/minecraft_click.mp3" preload="auto"></audio>
 
-<!-- ===== CREATE ACCOUNT MODAL ===== -->
-<div class="modal-overlay" id="modal-create">
+<!-- ===== ACCOUNT MANAGER MODAL ===== -->
+<div class="modal-overlay" id="modal-account">
   <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('modal-create')">✕</button>
-    <div class="modal-title">CREATE ACCOUNT</div>
-    <div class="modal-desc">A way to save your preferences from the launcher. Your settings and favourites will be tied to this account.</div>
-    <div class="modal-field"><label>USERNAME</label><input type="text" id="create-user" placeholder="Enter username" maxlength="24"></div>
-    <div class="modal-field"><label>PASSWORD</label><input type="password" id="create-pass" placeholder="Enter password" maxlength="32"></div>
-    <div class="modal-field">
-      <label>ACCOUNT ICON</label>
-      <div class="avatar-row">
-        <img id="create-avatar-preview" class="avatar-preview" src="./images/thumba.png" alt="icon" onclick="pickAvatar()">
-        <div class="avatar-hint">Click the icon to select<br>an image from your files.</div>
-        <input type="file" id="avatar-file-input" accept="image/*" style="display:none" onchange="onAvatarPicked(this)">
+    <div class="modal-header">
+      <div class="modal-title">ACCOUNT MANAGER</div>
+      <button class="modal-close" onclick="closeModal('modal-account')">✕</button>
+    </div>
+
+    <!-- GUEST VIEW: choose action -->
+    <div class="acc-view visible" id="acc-view-guest">
+      <div class="modal-desc">Manage your EagLauncher account to save settings and favourites across sessions.</div>
+      <button class="modal-btn" onclick="showAccView('create')">CREATE A LAUNCHER ACCOUNT</button>
+      <button class="modal-btn secondary" onclick="showAccView('login')">ENTER A LAUNCHER ACCOUNT</button>
+    </div>
+
+    <!-- CREATE VIEW -->
+    <div class="acc-view" id="acc-view-create">
+      <div class="modal-desc">Fill in the details below to create your account.</div>
+      <div class="modal-field"><label>USERNAME</label><input type="text" id="create-user" placeholder="Enter username" maxlength="24"></div>
+      <div class="modal-field"><label>PASSWORD</label><input type="password" id="create-pass" placeholder="Enter password" maxlength="32"></div>
+      <div class="modal-field">
+        <label>ACCOUNT ICON</label>
+        <div class="avatar-row">
+          <img id="create-avatar-preview" class="avatar-preview" src="./images/thumba.png" alt="icon" onclick="pickAvatar('create')">
+          <div class="avatar-hint">Click the icon to select<br>an image from your files.</div>
+        </div>
+      </div>
+      <div id="create-err" class="modal-err"></div>
+      <div class="modal-row">
+        <button class="modal-btn" onclick="confirmCreate()" style="flex:1">CREATE</button>
+        <button class="modal-btn secondary" onclick="showAccView('guest')" style="flex:1">BACK</button>
       </div>
     </div>
-    <div class="modal-row">
-      <button class="modal-btn" onclick="confirmCreate()" style="flex:1">CREATE</button>
-      <button class="modal-btn secondary" onclick="closeModal('modal-create')" style="flex:1">CANCEL</button>
+
+    <!-- LOGIN VIEW -->
+    <div class="acc-view" id="acc-view-login">
+      <div class="modal-desc">Enter your credentials to log into your account.</div>
+      <div class="modal-field"><label>USERNAME</label><input type="text" id="enter-user" placeholder="Enter username" maxlength="24"></div>
+      <div class="modal-field"><label>PASSWORD</label><input type="password" id="enter-pass" placeholder="Enter password" maxlength="32"></div>
+      <div id="enter-err" class="modal-err"></div>
+      <div class="modal-row">
+        <button class="modal-btn" onclick="confirmEnter()" style="flex:1">LOGIN</button>
+        <button class="modal-btn secondary" onclick="showAccView('guest')" style="flex:1">BACK</button>
+      </div>
     </div>
-    <div id="create-err" style="color:#e57373;font-size:9px;display:none;"></div>
+
+    <!-- LOGGED IN VIEW -->
+    <div class="acc-view" id="acc-view-loggedin">
+      <div class="acc-info-box">
+        <img id="loggedin-avatar" src="./images/thumba.png" alt="">
+        <div class="acc-info-text">
+          <div class="acc-info-name" id="loggedin-name">Username</div>
+          <div class="acc-info-sub">EagLauncher Account</div>
+        </div>
+      </div>
+      <button class="modal-btn secondary" onclick="changeAccountIcon()">CHANGE ACCOUNT ICON</button>
+      <button class="modal-btn secondary" onclick="revealPassword()">REVEAL ACCOUNT PASSWORD</button>
+      <div id="pass-reveal-text" class="acc-pass-reveal"></div>
+      <button class="modal-btn danger" onclick="logoutAcc()">EXIT ACCOUNT</button>
+    </div>
   </div>
 </div>
 
-<!-- ===== ENTER ACCOUNT MODAL ===== -->
-<div class="modal-overlay" id="modal-enter">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('modal-enter')">✕</button>
-    <div class="modal-title">ENTER ACCOUNT</div>
-    <div class="modal-desc">Log into an existing EagLauncher account.</div>
-    <div class="modal-field"><label>USERNAME</label><input type="text" id="enter-user" placeholder="Enter username" maxlength="24"></div>
-    <div class="modal-field"><label>PASSWORD</label><input type="password" id="enter-pass" placeholder="Enter password" maxlength="32"></div>
-    <div class="modal-row">
-      <button class="modal-btn" onclick="confirmEnter()" style="flex:1">LOGIN</button>
-      <button class="modal-btn secondary" onclick="closeModal('modal-enter')" style="flex:1">CANCEL</button>
+<!-- ===== FAVOURITES MODAL ===== -->
+<div class="modal-overlay" id="modal-fav">
+  <div class="modal-box fav-modal-box">
+    <div class="modal-header">
+      <div class="modal-title">★ FAVOURITES</div>
+      <button class="modal-close" onclick="closeModal('modal-fav')">✕</button>
     </div>
-    <div id="enter-err" style="color:#e57373;font-size:9px;display:none;"></div>
+
+    <!-- SAVED VIEW (when there are favs) -->
+    <div class="acc-view visible" id="fav-view-saved">
+      <div class="modal-desc">Your favourite versions. Click ▶ to launch instantly.</div>
+      <div id="fav-saved-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+      <button class="modal-btn secondary" onclick="showFavView('edit');buildFavEdit()">EDIT FAVOURITES</button>
+    </div>
+
+    <!-- EDIT VIEW -->
+    <div class="acc-view" id="fav-view-edit">
+      <div class="modal-desc">Select versions from dropdowns to toggle favourites.</div>
+      <div class="fav-scroll" id="fav-edit-content"></div>
+      <div class="modal-row" style="margin-top:8px">
+        <button class="modal-btn" onclick="saveFavourites()" style="flex:1">SAVE</button>
+        <button class="modal-btn secondary" onclick="cancelFavEdit()" style="flex:1">CANCEL</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ===== EDIT FAVOURITES MODAL ===== -->
-<div class="modal-overlay" id="modal-edit-fav">
-  <div class="modal-box" style="width:520px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;gap:12px;">
-    <button class="modal-close" onclick="closeModal('modal-edit-fav')">✕</button>
-    <div class="modal-title">EDIT FAVOURITES</div>
-    <div class="modal-desc" style="margin-bottom:8px">Select your favourite versions. No minimum required.</div>
-    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:8px 0;">
-      <div id="fav-edit-sections"></div>
-    </div>
-    <div class="modal-row" style="margin-top:12px">
-      <button class="modal-btn" onclick="saveFavourites()" style="flex:1">SAVE</button>
-      <button class="modal-btn secondary" onclick="closeModal('modal-edit-fav')" style="flex:1">CANCEL</button>
-    </div>
-  </div>
-</div>
+<!-- hidden file inputs -->
+<input type="file" id="avatar-file-create" accept="image/*" style="display:none" onchange="onAvatarPicked(this,'create')">
+<input type="file" id="avatar-file-change" accept="image/*" style="display:none" onchange="onAvatarPicked(this,'change')">
 
 <script>
-/* ============================================================
-   DATA
-   ============================================================ */
 const EDITIONS = {
-  web: {
-    bg:'./images/web edit.png', logo:'./images/web-title.png',
-    launchTxt:'Launching Eaglercraft,<br>be ready!',
-    vers:[
-      {lbl:'Eaglercraft 1.12.2',    img:'./images/1.12.png',        url:'https://eaglercraft.com/play/?version=1.12.2'},
-      {lbl:'Eaglercraft 1.12 WASM', img:'./images/1.12 wasm.png',   url:'https://eaglercraft.com/play/?version=1.12.2-wasm'},
-      {lbl:'Eaglercraft 1.8.8',     img:'./images/1.8.png',         url:'https://eaglercraft.com/play/?version=1.8.8'},
-      {lbl:'Eaglercraft 1.8 WASM',  img:'./images/1.8 wasm.png',    url:'https://eaglercraft.com/play/?version=1.8.8-wasm'},
-      {lbl:'Eaglercraft b1.7.3',    img:'./images/1.7.3.png',       url:'https://eaglercraft.com/play/?version=b1.7.3'},
-      {lbl:'Eaglercraft 1.5.2',     img:'./images/1.5.2.png',       url:'https://eaglercraft.com/play/?version=1.5.2'},
-      {lbl:'Eaglercraft b1.3',      img:'./images/1.3.png',         url:'https://eaglercraft.com/play/?version=b1.3'},
-      {lbl:'Eaglercraft a1.2.6',    img:'./images/1.2.6.png',       url:'https://eaglercraft.com/play/?version=a1.2.6'},
-      {lbl:'Indev Version',         img:'./images/Indev.png',        url:'https://eaglercraft.com/play/?version=indev'},
-      {lbl:'Scratch Version',       img:'./images/Scratch.png',      url:'https://eaglercraft.com/play/?version=scratch'},
-      {lbl:'Classic (c0.30)',       img:'./images/classic.png',      url:'https://irv77.github.io/AmplerLauncher/mc/c0.30/'},
-      {lbl:'Classic WASM',          img:'./images/classic wasm.png', url:'https://irv77.github.io/AmplerLauncher/mc/c0.30-wasm/'},
-    ]
-  },
-  modded:{
-    bg:'./images/mod edit.jpg', logo:'./images/modded-title.png',
-    launchTxt:'Launching a modded client,<br>be ready!',
-    vers:[
-      {lbl:'Astra Client',  img:'./images/astra-client.png',  url:'https://irv77.github.io/AmplerLauncher/mc/astraclient/'},
-      {lbl:'EaglerForge',   img:'./images/eaglerforge.png',   url:'https://irv77.github.io/AmplerLauncher/mc/eaglerforge/'},
-      {lbl:'PixelClient',   img:'./images/pixelclient.svg',   url:'https://irv77.github.io/AmplerLauncher/mc/pixelclient/'},
-      {lbl:'Resent Client', img:'./images/resent-client.png', url:'https://irv77.github.io/AmplerLauncher/mc/resentclient/'},
-      {lbl:'Shadow Client', img:'./images/shadow.png',        url:'https://irv77.github.io/AmplerLauncher/mc/shadowclient'},
-      {lbl:'Starlike',      img:'./images/starlike.png',      url:'https://irv77.github.io/AmplerLauncher/mc/starlikeclient/'},
-      {lbl:'Tuff Client',   img:'./images/tuff.png',          url:'https://irv77.github.io/AmplerLauncher/mc/tuffclient/'},
-    ]
-  },
-  controls:{
-    bg:'./images/console edit.webp', logo:'./images/controls-title.png',
-    launchTxt:'Launching Eaglercraft,<br>be ready!',
-    vers:[
-      {lbl:'1.12 Mobile', img:'./images/1.12m.png', url:'https://eaglercraft.com/play/?version=1.12.2&userscript=flameddogo99-eaglermobile.js'},
-      {lbl:'1.8 Mobile',  img:'./images/1.8m.png',  url:'https://eaglercraft.com/play/?version=1.8.8&userscript=flameddogo99-eaglermobile.js'},
-      {lbl:'1.8 Console', img:'./images/1.8c.png',  url:'https://irv77.github.io/AmplerLauncher/mc/1.8.8/?userscript=irv77-eaglerconsole.js'},
-    ]
-  }
+  web:{bg:'./images/web edit.png',logo:'./images/web-title.png',launchTxt:'Launching Eaglercraft,<br>be ready!',vers:[
+    {lbl:'Eaglercraft 1.12.2',    img:'./images/1.12.png',        url:'https://eaglercraft.com/play/?version=1.12.2'},
+    {lbl:'Eaglercraft 1.12 WASM', img:'./images/1.12 wasm.png',   url:'https://eaglercraft.com/play/?version=1.12.2-wasm'},
+    {lbl:'Eaglercraft 1.8.8',     img:'./images/1.8.png',         url:'https://eaglercraft.com/play/?version=1.8.8'},
+    {lbl:'Eaglercraft 1.8 WASM',  img:'./images/1.8 wasm.png',    url:'https://eaglercraft.com/play/?version=1.8.8-wasm'},
+    {lbl:'Eaglercraft b1.7.3',    img:'./images/1.7.3.png',       url:'https://eaglercraft.com/play/?version=b1.7.3'},
+    {lbl:'Eaglercraft 1.5.2',     img:'./images/1.5.2.png',       url:'https://eaglercraft.com/play/?version=1.5.2'},
+    {lbl:'Eaglercraft b1.3',      img:'./images/1.3.png',         url:'https://eaglercraft.com/play/?version=b1.3'},
+    {lbl:'Eaglercraft a1.2.6',    img:'./images/1.2.6.png',       url:'https://eaglercraft.com/play/?version=a1.2.6'},
+    {lbl:'Indev Version',         img:'./images/Indev.png',       url:'https://eaglercraft.com/play/?version=indev'},
+    {lbl:'Scratch Version',       img:'./images/Scratch.png',     url:'https://eaglercraft.com/play/?version=scratch'},
+    {lbl:'Classic (c0.30)',       img:'./images/classic.png',     url:'https://irv77.github.io/AmplerLauncher/mc/c0.30/'},
+    {lbl:'Classic WASM',          img:'./images/classic wasm.png',url:'https://irv77.github.io/AmplerLauncher/mc/c0.30-wasm/'},
+  ]},
+  modded:{bg:'./images/mod edit.jpg',logo:'./images/modded-title.png',launchTxt:'Launching a modded client,<br>be ready!',vers:[
+    {lbl:'Astra Client',  img:'./images/astra-client.png',  url:'https://irv77.github.io/AmplerLauncher/mc/astraclient/'},
+    {lbl:'EaglerForge',   img:'./images/eaglerforge.png',   url:'https://irv77.github.io/AmplerLauncher/mc/eaglerforge/'},
+    {lbl:'PixelClient',   img:'./images/pixelclient.svg',   url:'https://irv77.github.io/AmplerLauncher/mc/pixelclient/'},
+    {lbl:'Resent Client', img:'./images/resent-client.png', url:'https://irv77.github.io/AmplerLauncher/mc/resentclient/'},
+    {lbl:'Shadow Client', img:'./images/shadow.png',        url:'https://irv77.github.io/AmplerLauncher/mc/shadowclient'},
+    {lbl:'Starlike',      img:'./images/starlike.png',      url:'https://irv77.github.io/AmplerLauncher/mc/starlikeclient/'},
+    {lbl:'Tuff Client',   img:'./images/tuff.png',          url:'https://irv77.github.io/AmplerLauncher/mc/tuffclient/'},
+  ]},
+  controls:{bg:'./images/console edit.webp',logo:'./images/controls-title.png',launchTxt:'Launching Eaglercraft,<br>be ready!',vers:[
+    {lbl:'1.12 Mobile', img:'./images/1.12m.png', url:'https://eaglercraft.com/play/?version=1.12.2&userscript=flameddogo99-eaglermobile.js'},
+    {lbl:'1.8 Mobile',  img:'./images/1.8m.png',  url:'https://eaglercraft.com/play/?version=1.8.8&userscript=flameddogo99-eaglermobile.js'},
+    {lbl:'1.8 Console', img:'./images/1.8c.png',  url:'https://irv77.github.io/AmplerLauncher/mc/1.8.8/?userscript=irv77-eaglerconsole.js'},
+  ]}
 };
-
 const TRACKS=['1-01. Key','1-03. Subwoofer Lullaby','1-05. Living Mice','1-06. Moog City','1-07. Haggstrom','1-08. Minecraft','1-09. Oxygène','1-11. Mice on Venus','1-13. Wet Hands','1-14. Clark','1-18. Sweden','1-19. Cat','1-20. Dog','1-21. Danny','1-22. Beginning','2-06. Moog City 2'];
 
-/* ============================================================
-   STATE + SETTINGS
-   ============================================================ */
-let curEd='web', curVer=0, newWin=false, sbOpen=true;
-let sfxOn=true, musicOn=true, musicIdx=0, shuffle=false, fpsOn=false;
-let volume=0.6, bgDim=0.45, zoomLevel=1.2;
-let accounts={}; 
+let curEd='web',curVer=0,newWin=false,sbOpen=true;
+let sfxOn=true,musicOn=true,musicIdx=0,shuffle=false,fpsOn=false;
+let volume=0.6,bgDimVal=45,zoomLevel=1.2;
+let accounts={};
 let currentUser=null;
 let favourites=[];
 let tempFavs=[];
 
-const DEFAULT_SETTINGS={theme:'dark',launcherName:'EagLauncher',newTab:false,sbDefault:'open',sfx:true,fps:false,zoom:120,bgDim:45};
-let settings={...DEFAULT_SETTINGS};
-
-function loadFromStorage(){
-  try{
-    const stored=localStorage.getItem('eaglauncher_accounts');
-    if(stored)accounts=JSON.parse(stored);
-    const user=localStorage.getItem('eaglauncher_currentUser');
-    if(user&&accounts[user]){
-      currentUser=user;
-      favourites=[...accounts[user].favs||[]];
-      const accSettings=accounts[user].settings||{};
-      Object.assign(settings,accSettings);
-    }
-  }catch(e){console.error('Storage load error:',e);}
-}
-
-function saveSettings(){
-  try{
-    if(currentUser&&accounts[currentUser]){
-      accounts[currentUser].settings={...settings};
-      localStorage.setItem('eaglauncher_accounts',JSON.stringify(accounts));
-    }
-  }catch(e){console.error('Settings save error:',e);}
-}
-
-function saveAccounts(){
-  try{localStorage.setItem('eaglauncher_accounts',JSON.stringify(accounts));}catch(e){console.error('Storage save error:',e);}
-}
-
-function saveCurrentUser(){
-  try{localStorage.setItem('eaglauncher_currentUser',currentUser||'');}catch(e){console.error('User save error:',e);}
-}
-
-loadFromStorage();
+const DEFAULT_S={theme:'dark',launcherName:'EagLauncher',newTab:false,sbDefault:'open',sfx:true,fps:false,zoom:120,bgDim:45};
+let settings={...DEFAULT_S};
 
 const audio=document.getElementById('audio-player');
 const sfxClick=document.getElementById('sfx-click');
-audio.volume=volume;
 
-/* ============================================================
-   LOADING BAR
-   ============================================================ */
-const LOAD_MSGS=['Initializing launcher...','Loading fonts...','Loading assets...','Preparing music player...','Fetching version list...','Almost ready...','Done!'];
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+function loadStorage(){
+  try{
+    const a=lsGet('eaglauncher_accounts');
+    if(a)accounts=JSON.parse(a);
+    const u=lsGet('eaglauncher_currentUser');
+    if(u&&u!==''&&accounts[u]){
+      currentUser=u;
+      favourites=[...(accounts[u].favs||[])];
+      Object.assign(settings,accounts[u].settings||{});
+    }
+  }catch(e){console.warn('Load error',e);}
+}
+
+function saveAccounts(){ lsSet('eaglauncher_accounts',JSON.stringify(accounts)); }
+function saveCurrentUser(){ lsSet('eaglauncher_currentUser',currentUser||''); }
+function persistSettings(){ if(!currentUser||!accounts[currentUser])return; accounts[currentUser].settings={...settings}; saveAccounts(); }
+function persistFavs(){ if(!currentUser||!accounts[currentUser])return; accounts[currentUser].favs=[...favourites]; saveAccounts(); }
+
+loadStorage();
+
+const MSGS=['Initializing launcher...','Loading fonts...','Loading assets...','Preparing music player...','Fetching version list...','Almost ready...','Done!'];
 let prog=0;
 function fakeLoad(){
   prog=Math.min(prog+Math.random()*8+2,100);
   document.getElementById('bar-fill').style.width=prog+'%';
   document.getElementById('bar-pct').textContent=Math.floor(prog)+'%';
-  document.getElementById('bar-status').textContent=LOAD_MSGS[Math.min(Math.floor(prog/15),LOAD_MSGS.length-1)];
+  document.getElementById('bar-status').textContent=MSGS[Math.min(Math.floor(prog/15),MSGS.length-1)];
   if(prog>=100){
     document.getElementById('bar-fill').classList.add('shine');
     setTimeout(()=>{
-      const ls=document.getElementById('loading-screen');
-      ls.classList.add('fade-out');
+      document.getElementById('loading-screen').classList.add('fade-out');
       setTimeout(()=>{
-        ls.style.display='none';
+        document.getElementById('loading-screen').style.display='none';
         const l=document.getElementById('launcher');
         l.style.cssText='display:flex;opacity:0;transition:opacity 0.8s ease';
-        requestAnimationFrame(()=>{l.style.opacity='1';});
-        applyLoadedSettings();
+        requestAnimationFrame(()=>l.style.opacity='1');
+        applySettings();
         switchEd('web');
         startMusic();
-        if(currentUser&&accounts[currentUser]){
-          loginAs(currentUser,accounts[currentUser].avatar);
-        }
+        if(currentUser&&accounts[currentUser])loginAs(currentUser,accounts[currentUser].avatar,false);
       },1100);
     },750);
-  }else{setTimeout(fakeLoad,100+Math.random()*210);}
+  }else setTimeout(fakeLoad,100+Math.random()*210);
 }
 setTimeout(fakeLoad,500);
 
-function applyLoadedSettings(){
+function applySettings(){
   document.body.classList.toggle('light-mode',settings.theme==='light');
   document.getElementById('t-dark').classList.toggle('on',settings.theme==='dark');
   document.getElementById('t-light').classList.toggle('on',settings.theme==='light');
@@ -948,6 +704,8 @@ function applyLoadedSettings(){
   document.getElementById('t-no').classList.toggle('on',!newWin);
   document.getElementById('t-yes').classList.toggle('on',newWin);
   sbOpen=settings.sbDefault==='open';
+  document.getElementById('sidebar').classList.toggle('collapsed',!sbOpen);
+  document.getElementById('ham-float').classList.toggle('show',!sbOpen);
   document.getElementById('t-sbo').classList.toggle('on',settings.sbDefault==='open');
   document.getElementById('t-sbc').classList.toggle('on',settings.sbDefault==='closed');
   sfxOn=settings.sfx;
@@ -957,112 +715,73 @@ function applyLoadedSettings(){
   document.getElementById('fps-ctr').style.display=fpsOn?'block':'none';
   document.getElementById('t-fps-off').classList.toggle('on',!fpsOn);
   document.getElementById('t-fps-on').classList.toggle('on',fpsOn);
-  setZoom(settings.zoom);
-  setBgDim(settings.bgDim);
+  if(fpsOn)startFps();
+  document.getElementById('zoom-sl').value=settings.zoom;
+  setZoom(settings.zoom,false);
+  document.getElementById('dim-sl').value=settings.bgDim;
+  _applyDim(settings.bgDim);
 }
 
-/* ============================================================
-   ZOOM
-   ============================================================ */
-function setZoom(v){
+function setZoom(v,save=true){
+  v=Math.max(50,Math.min(180,Number(v)));
   zoomLevel=v/100;
-  settings.zoom=v;
-  saveSettings();
+  document.getElementById('zoom-sl').value=v;
   document.getElementById('zoom-v').textContent=v+'%';
   document.body.style.transform=`scale(${zoomLevel})`;
   document.body.style.transformOrigin='top left';
   document.body.style.width=(100/zoomLevel)+'vw';
   document.body.style.height=(100/zoomLevel)+'vh';
   document.documentElement.style.overflow='hidden';
-  positionMenus();
+  if(save){settings.zoom=v;persistSettings();}
 }
-
-function positionMenus(){
-  const accBtn=document.getElementById('account-btn');
-  const favBtn=document.getElementById('fav-btn');
-  const accMenu=document.getElementById('account-dd');
-  const favMenu=document.getElementById('fav-dd');
-  
-  if(accBtn){
-    const rect=accBtn.getBoundingClientRect();
-    accMenu.style.top=(rect.bottom)+'px';
-    accMenu.style.left=(rect.left)+'px';
-  }
-  
-  if(favBtn){
-    const rect=favBtn.getBoundingClientRect();
-    favMenu.style.top=(rect.bottom)+'px';
-    favMenu.style.left=(rect.left)+'px';
-  }
-}
-
 window.addEventListener('wheel',e=>{
   if(!e.ctrlKey)return;
   e.preventDefault();
   const sl=document.getElementById('zoom-sl');
   let v=parseInt(sl.value)+(e.deltaY<0?5:-5);
-  v=Math.max(50,Math.min(180,v));
-  sl.value=v; setZoom(v);
+  setZoom(v);
 },{passive:false});
 
-window.addEventListener('resize',positionMenus);
-
-/* ============================================================
-   EDITION SWITCH
-   ============================================================ */
 function switchEd(ed){
   ['nav-web','nav-modded','nav-controls','nav-credits','nav-settings']
     .forEach(id=>{const e=document.getElementById(id);if(e)e.classList.remove('active');});
   document.getElementById('game-screen').classList.remove('hidden');
   document.getElementById('credits-screen').classList.remove('visible');
   document.getElementById('settings-screen').classList.remove('visible');
-  const bg=document.getElementById('bg');
-  const bgDimEl=document.getElementById('bg-dim');
+  const bg=document.getElementById('bg'),dim=document.getElementById('bg-dim');
   if(ed==='credits'){
     document.getElementById('nav-credits').classList.add('active');
-    bg.style.backgroundImage='none'; bg.style.background='transparent';
-    bgDimEl.style.display='none';
+    bg.style.backgroundImage='none';bg.style.background='transparent';dim.style.display='none';
     document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('credits-screen').classList.add('visible');
-    return;
+    document.getElementById('credits-screen').classList.add('visible');return;
   }
   if(ed==='settings'){
     document.getElementById('nav-settings').classList.add('active');
-    bg.style.backgroundImage='none'; bg.style.background='var(--settings-bg)';
-    bgDimEl.style.display='none';
+    bg.style.backgroundImage='none';bg.style.background='var(--settings-bg)';dim.style.display='none';
     document.getElementById('game-screen').classList.add('hidden');
-    document.getElementById('settings-screen').classList.add('visible');
-    return;
+    document.getElementById('settings-screen').classList.add('visible');return;
   }
-  const navEl=document.getElementById('nav-'+ed);
-  if(navEl)navEl.classList.add('active');
-  curEd=ed; curVer=0;
-  const data=EDITIONS[ed];
-  bg.style.background=''; bg.style.backgroundImage=`url('${data.bg}')`;
-  bgDimEl.style.display='';
-  setBgDim(settings.bgDim);
+  const navEl=document.getElementById('nav-'+ed);if(navEl)navEl.classList.add('active');
+  curEd=ed;curVer=0;const data=EDITIONS[ed];
+  bg.style.background='';bg.style.backgroundImage=`url('${data.bg}')`;
+  dim.style.display='';_applyDim(settings.bgDim);
   document.getElementById('logo-img').src=data.logo;
-  buildDd(data.vers); selectVer(0);
+  buildDd(data.vers);selectVer(0);
 }
 
-/* ============================================================
-   DROPDOWN
-   ============================================================ */
 function buildDd(vers){
-  const list=document.getElementById('dd-list');
-  list.innerHTML='';
+  const list=document.getElementById('dd-list');list.innerHTML='';
   vers.forEach((v,i)=>{
     const isFav=favourites.some(f=>f.ed===curEd&&f.verIdx===i);
     const d=document.createElement('div');
     d.className='dd-opt'+(i===0?' selected':'')+(isFav?' favourited':'');
-    d.innerHTML=`<img src="${v.img}" alt=""> ${v.lbl}<span class="fav-star">★</span>`;
+    d.innerHTML=`<img src="${v.img}" alt="">${v.lbl}<span class="fav-star">★</span>`;
     d.onclick=()=>{clickPlay();selectVer(i);};
     list.appendChild(d);
   });
 }
 function selectVer(i){
-  curVer=i;
-  const v=EDITIONS[curEd].vers[i];
+  curVer=i;const v=EDITIONS[curEd].vers[i];
   document.getElementById('dd-img').src=v.img;
   document.getElementById('dd-lbl').textContent=v.lbl;
   document.querySelectorAll('.dd-opt').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
@@ -1072,46 +791,39 @@ function toggleDd(){clickPlay();document.getElementById('dd-btn').classList.togg
 function closeDd(){document.getElementById('dd-btn').classList.remove('open');document.getElementById('dd-list').classList.remove('open');}
 document.addEventListener('click',e=>{if(!e.target.closest('.dd-wrap'))closeDd();});
 
-/* ============================================================
-   LAUNCH
-   ============================================================ */
 function launchGame(){
   clickPlay();
-  const url=EDITIONS[curEd].vers[curVer].url;
-  const txt=EDITIONS[curEd].launchTxt;
+  const url=EDITIONS[curEd].vers[curVer].url,txt=EDITIONS[curEd].launchTxt;
   document.getElementById('launch-txt').innerHTML=txt;
   document.getElementById('launch-overlay').classList.add('active');
   setTimeout(()=>{
     document.getElementById('launch-overlay').classList.remove('active');
-    if(newWin)window.open(url,'_blank');
-    else window.location.href=url;
+    if(newWin)window.open(url,'_blank');else window.location.href=url;
+  },2400);
+}
+function launchUrl(url){
+  clickPlay();
+  document.getElementById('launch-txt').innerHTML='Launching Eaglercraft,<br>be ready!';
+  document.getElementById('launch-overlay').classList.add('active');
+  setTimeout(()=>{
+    document.getElementById('launch-overlay').classList.remove('active');
+    if(newWin)window.open(url,'_blank');else window.location.href=url;
   },2400);
 }
 
-/* ============================================================
-   SIDEBAR
-   ============================================================ */
 function toggleSb(){
-  clickPlay();
-  sbOpen=!sbOpen;
+  clickPlay();sbOpen=!sbOpen;
   document.getElementById('sidebar').classList.toggle('collapsed',!sbOpen);
   document.getElementById('ham-float').classList.toggle('show',!sbOpen);
 }
 
-/* ============================================================
-   CREDITS TABS
-   ============================================================ */
-function showCredTab(btn,panelId){
+function showCredTab(btn,id){
   clickPlay();
   document.querySelectorAll('.cred-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.cred-panel').forEach(p=>p.classList.remove('visible'));
-  btn.classList.add('active');
-  document.getElementById(panelId).classList.add('visible');
+  btn.classList.add('active');document.getElementById(id).classList.add('visible');
 }
 
-/* ============================================================
-   SETTINGS
-   ============================================================ */
 function showCat(id){
   clickPlay();
   document.querySelectorAll('.cat-panel').forEach(p=>p.classList.remove('visible'));
@@ -1119,83 +831,25 @@ function showCat(id){
   document.getElementById('cat-'+id).classList.add('visible');
   event.currentTarget.classList.add('active');
 }
-function setTheme(t){
-  clickPlay();
-  settings.theme=t;
-  saveSettings();
-  document.body.classList.toggle('light-mode',t==='light');
-  document.getElementById('t-dark').classList.toggle('on',t==='dark');
-  document.getElementById('t-light').classList.toggle('on',t==='light');
-}
-function setName(v){
-  settings.launcherName=v||'EagLauncher';
-  saveSettings();
-  document.getElementById('topbar-name').textContent=settings.launcherName;
-}
-function setWin(v){
-  clickPlay();
-  settings.newTab=v;
-  saveSettings();
-  newWin=v;
-  document.getElementById('t-no').classList.toggle('on',!v);
-  document.getElementById('t-yes').classList.toggle('on',v);
-}
-function setSbDef(v){
-  clickPlay();
-  settings.sbDefault=v;
-  saveSettings();
-  document.getElementById('t-sbo').classList.toggle('on',v==='open');
-  document.getElementById('t-sbc').classList.toggle('on',v==='closed');
-}
-function setSfx(v){
-  clickPlay();
-  settings.sfx=v;
-  saveSettings();
-  sfxOn=v;
-  document.getElementById('t-sfx-on').classList.toggle('on',v);
-  document.getElementById('t-sfx-off').classList.toggle('on',!v);
-}
-function setFps(v){
-  clickPlay();
-  settings.fps=v;
-  saveSettings();
-  fpsOn=v;
-  document.getElementById('fps-ctr').style.display=v?'block':'none';
-  document.getElementById('t-fps-off').classList.toggle('on',!v);
-  document.getElementById('t-fps-on').classList.toggle('on',v);
-  if(v)startFps();else stopFps();
-}
-function setBgDim(v){
-  settings.bgDim=v;
-  saveSettings();
-  bgDim=v/100;
-  document.getElementById('dim-v').textContent=v+'%';
-  document.getElementById('bg-dim').style.background=`rgba(0,0,0,${bgDim})`;
-}
+function setTheme(t){clickPlay();settings.theme=t;persistSettings();document.body.classList.toggle('light-mode',t==='light');document.getElementById('t-dark').classList.toggle('on',t==='dark');document.getElementById('t-light').classList.toggle('on',t==='light');}
+function setName(v){settings.launcherName=v||'EagLauncher';persistSettings();document.getElementById('topbar-name').textContent=settings.launcherName;}
+function setWin(v){clickPlay();settings.newTab=v;persistSettings();newWin=v;document.getElementById('t-no').classList.toggle('on',!v);document.getElementById('t-yes').classList.toggle('on',v);}
+function setSbDef(v){clickPlay();settings.sbDefault=v;persistSettings();document.getElementById('t-sbo').classList.toggle('on',v==='open');document.getElementById('t-sbc').classList.toggle('on',v==='closed');}
+function setSfx(v){clickPlay();settings.sfx=v;persistSettings();sfxOn=v;document.getElementById('t-sfx-on').classList.toggle('on',v);document.getElementById('t-sfx-off').classList.toggle('on',!v);}
+function setFps(v){clickPlay();settings.fps=v;persistSettings();fpsOn=v;document.getElementById('fps-ctr').style.display=v?'block':'none';document.getElementById('t-fps-off').classList.toggle('on',!v);document.getElementById('t-fps-on').classList.toggle('on',v);if(v)startFps();else stopFps();}
+function _applyDim(v){bgDimVal=v;document.getElementById('bg-dim').style.background=`rgba(0,0,0,${v/100})`;}
+function setBgDim(v){settings.bgDim=Number(v);persistSettings();document.getElementById('dim-v').textContent=v+'%';_applyDim(v);}
 function toggleAcc(id){const b=document.getElementById(id);b.classList.toggle('open');document.getElementById('arr-'+id).textContent=b.classList.contains('open')?'▲':'▼';}
 
-/* ============================================================
-   CLICK SFX
-   ============================================================ */
-function clickPlay(){
-  if(!sfxOn)return;
-  try{sfxClick.currentTime=0;sfxClick.play().catch(()=>{});}catch(e){}
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('button,.nav-item,.tb-btn,.tog,.cat-tab,.dd-opt,.cred-tab').forEach(el=>{
-    el.addEventListener('mousedown',clickPlay);
-  });
-});
+function clickPlay(){if(!sfxOn)return;try{sfxClick.currentTime=0;sfxClick.play().catch(()=>{});}catch(e){}}
+document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('button,.nav-item,.tog,.cat-tab,.cred-tab').forEach(el=>el.addEventListener('mousedown',clickPlay));});
 
-/* ============================================================
-   MUSIC
-   ============================================================ */
 function trackPath(i){return'./SFX/'+TRACKS[i]+'.mp3';}
-function updateMusicUI(){const name=TRACKS[musicIdx];document.getElementById('music-track-name').textContent=name;document.getElementById('music-title-scroll').textContent=name;}
+function updateMusicUI(){const n=TRACKS[musicIdx];document.getElementById('music-track-name').textContent=n;document.getElementById('music-title-scroll').textContent=n;}
 function startMusic(){musicIdx=0;updateMusicUI();playTrack();}
 function playTrack(){
   if(!musicOn)return;
-  audio.src=trackPath(musicIdx); audio.volume=volume;
+  audio.src=trackPath(musicIdx);audio.volume=volume;
   audio.play().catch(()=>{document.addEventListener('click',function once(){audio.play().catch(()=>{});document.removeEventListener('click',once);});});
   updateMusicUI();
 }
@@ -1206,250 +860,220 @@ function setMusicOn(v){clickPlay();musicOn=v;document.getElementById('t-mus-on')
 function setVol(v){volume=v/100;audio.volume=volume;document.getElementById('vol-v').textContent=v+'%';}
 function setShuffle(v){clickPlay();shuffle=v;document.getElementById('t-shuf-off').classList.toggle('on',!v);document.getElementById('t-shuf-on').classList.toggle('on',v);}
 
-/* ============================================================
-   FPS COUNTER
-   ============================================================ */
-let fpsRunning=false,fpsLast=performance.now(),fpsFrames=0;
+let fpsRunning=false,fpsLast=performance.now(),fpsF=0;
 function startFps(){fpsRunning=true;countFps();}
 function stopFps(){fpsRunning=false;}
-function countFps(){if(!fpsRunning)return;fpsFrames++;const now=performance.now();if(now-fpsLast>=1000){document.getElementById('fps-ctr').textContent=fpsFrames+' FPS';fpsFrames=0;fpsLast=now;}requestAnimationFrame(countFps);}
+function countFps(){if(!fpsRunning)return;fpsF++;const n=performance.now();if(n-fpsLast>=1000){document.getElementById('fps-ctr').textContent=fpsF+' FPS';fpsF=0;fpsLast=n;}requestAnimationFrame(countFps);}
 
-/* ============================================================
-   MODAL HELPERS
-   ============================================================ */
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
 
-/* ============================================================
-   ACCOUNT DROPDOWN
-   ============================================================ */
-function toggleAccDd(){
+function openAccModal(){
   clickPlay();
-  const menu=document.getElementById('account-dd');
-  menu.classList.toggle('open');
-  if(menu.classList.contains('open'))positionMenus();
+  if(currentUser&&accounts[currentUser]){ showAccView('loggedin'); }
+  else{ showAccView('guest'); }
+  openModal('modal-account');
 }
-document.addEventListener('click',e=>{
-  if(!e.target.closest('#account-dd-wrap')){
-    document.getElementById('account-dd').classList.remove('open');
+function showAccView(v){
+  document.querySelectorAll('.acc-view').forEach(el=>el.classList.remove('visible'));
+  document.getElementById('acc-view-'+v).classList.add('visible');
+  if(v==='loggedin'&&currentUser){
+    document.getElementById('loggedin-avatar').src=accounts[currentUser].avatar||'./images/thumba.png';
+    document.getElementById('loggedin-name').textContent=currentUser;
+    document.getElementById('pass-reveal-text').style.display='none';
+    document.getElementById('pass-reveal-text').textContent='';
   }
-  if(!e.target.closest('#fav-dd-wrap')){
-    document.getElementById('fav-dd').classList.remove('open');
-  }
-});
+}
 
-/* ============================================================
-   CREATE ACCOUNT
-   ============================================================ */
-let pendingAvatarDataUrl=null;
-function openCreateAcc(){
-  clickPlay();
-  document.getElementById('account-dd').classList.remove('open');
-  document.getElementById('create-user').value='';
-  document.getElementById('create-pass').value='';
-  document.getElementById('create-avatar-preview').src='./images/thumba.png';
-  document.getElementById('create-err').style.display='none';
-  pendingAvatarDataUrl=null;
-  openModal('modal-create');
-}
-function pickAvatar(){
-  document.getElementById('avatar-file-input').click();
-}
-function onAvatarPicked(input){
-  const file=input.files[0];
-  if(!file)return;
+function onAvatarPicked(input,mode){
+  const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=e=>{
-    pendingAvatarDataUrl=e.target.result;
-    document.getElementById('create-avatar-preview').src=pendingAvatarDataUrl;
+    if(mode==='create'){
+      document.getElementById('create-avatar-preview').src=e.target.result;
+      document.getElementById('create-avatar-preview').dataset.url=e.target.result;
+    } else if(currentUser&&accounts[currentUser]){
+      accounts[currentUser].avatar=e.target.result;
+      saveAccounts();
+      document.getElementById('account-icon').src=e.target.result;
+      document.getElementById('loggedin-avatar').src=e.target.result;
+    }
   };
   reader.readAsDataURL(file);
 }
+function pickAvatar(mode){ document.getElementById('avatar-file-'+mode).click(); }
+function changeAccountIcon(){ clickPlay(); document.getElementById('avatar-file-change').click(); }
+
 function confirmCreate(){
   clickPlay();
   const user=document.getElementById('create-user').value.trim();
   const pass=document.getElementById('create-pass').value;
+  const avatarEl=document.getElementById('create-avatar-preview');
+  const avatar=avatarEl.dataset.url||'./images/thumba.png';
   const errEl=document.getElementById('create-err');
+  errEl.style.display='none';
   if(!user){errEl.textContent='Username cannot be empty.';errEl.style.display='block';return;}
   if(!pass){errEl.textContent='Password cannot be empty.';errEl.style.display='block';return;}
   if(accounts[user]){errEl.textContent='Username already exists.';errEl.style.display='block';return;}
-  const avatar=pendingAvatarDataUrl||'./images/thumba.png';
-  accounts[user]={password:pass,avatar,settings:{...DEFAULT_SETTINGS},favs:[]};
+  accounts[user]={password:pass,avatar,settings:{...DEFAULT_S},favs:[]};
   saveAccounts();
-  loginAs(user,avatar);
-  closeModal('modal-create');
+  loginAs(user,avatar,true);
+  closeModal('modal-account');
 }
 
-/* ============================================================
-   ENTER ACCOUNT
-   ============================================================ */
-function openEnterAcc(){
-  clickPlay();
-  document.getElementById('account-dd').classList.remove('open');
-  document.getElementById('enter-user').value='';
-  document.getElementById('enter-pass').value='';
-  document.getElementById('enter-err').style.display='none';
-  openModal('modal-enter');
-}
 function confirmEnter(){
   clickPlay();
   const user=document.getElementById('enter-user').value.trim();
   const pass=document.getElementById('enter-pass').value;
   const errEl=document.getElementById('enter-err');
+  errEl.style.display='none';
   if(!accounts[user]){errEl.textContent='Account not found.';errEl.style.display='block';return;}
   if(accounts[user].password!==pass){errEl.textContent='Wrong password.';errEl.style.display='block';return;}
-  loginAs(user,accounts[user].avatar);
-  closeModal('modal-enter');
+  loginAs(user,accounts[user].avatar,true);
+  closeModal('modal-account');
 }
 
-/* ============================================================
-   LOGIN / LOGOUT
-   ============================================================ */
 function loginAs(user,avatar){
   currentUser=user;
   saveCurrentUser();
-  document.getElementById('account-icon').src=avatar;
+  favourites=[...(accounts[user].favs||[])];
+  Object.assign(settings,accounts[user].settings||{});
+  document.getElementById('account-icon').src=avatar||'./images/thumba.png';
   document.getElementById('account-label').textContent=user;
-  document.getElementById('acc-create-btn').style.display='none';
-  document.getElementById('acc-enter-btn').style.display='none';
-  document.getElementById('acc-logout-btn').style.display='block';
-  if(accounts[user].favs)favourites=[...accounts[user].favs];
-  if(accounts[user].settings)Object.assign(settings,accounts[user].settings);
-  applyLoadedSettings();
+  applySettings();
   buildDd(EDITIONS[curEd].vers);
-  updateFavDd();
 }
 function logoutAcc(){
   clickPlay();
-  document.getElementById('account-dd').classList.remove('open');
   if(currentUser&&accounts[currentUser]){
     accounts[currentUser].favs=[...favourites];
     accounts[currentUser].settings={...settings};
     saveAccounts();
   }
-  currentUser=null;
-  saveCurrentUser();
-  settings={...DEFAULT_SETTINGS};
-  applyLoadedSettings();
+  currentUser=null;saveCurrentUser();
+  settings={...DEFAULT_S};applySettings();
   document.getElementById('account-icon').src='./images/thumba.png';
   document.getElementById('account-label').textContent='Guest';
-  document.getElementById('acc-create-btn').style.display='block';
-  document.getElementById('acc-enter-btn').style.display='block';
-  document.getElementById('acc-logout-btn').style.display='none';
-  favourites=[];
-  updateFavDd();
+  favourites=[];buildDd(EDITIONS[curEd].vers);
+  closeModal('modal-account');
 }
 
-/* ============================================================
-   FAVOURITES DROPDOWN
-   ============================================================ */
-function toggleFavDd(){
+let passRevealTimer=null;
+function revealPassword(){
   clickPlay();
-  const menu=document.getElementById('fav-dd');
-  menu.classList.toggle('open');
-  if(menu.classList.contains('open'))positionMenus();
+  if(!currentUser||!accounts[currentUser])return;
+  const el=document.getElementById('pass-reveal-text');
+  el.textContent='Password: '+accounts[currentUser].password;
+  el.style.display='block';
+  clearTimeout(passRevealTimer);
+  passRevealTimer=setTimeout(()=>{el.style.display='none';el.textContent='';},5000);
 }
 
-function updateFavDd(){
-  const list=document.getElementById('fav-dd-list');
-  list.innerHTML='';
-  if(favourites.length===0){
-    list.innerHTML='<div class="fav-dd-empty">No favourites</div>';
-    return;
+function openFavModal(){
+  clickPlay();
+  if(favourites.length>0){
+    showFavView('saved');
+    buildFavSaved();
+  }else{
+    showFavView('edit');
+    buildFavEdit();
   }
+  openModal('modal-fav');
+}
+function showFavView(v){
+  document.querySelectorAll('#modal-fav .acc-view').forEach(el=>el.classList.remove('visible'));
+  document.getElementById('fav-view-'+v).classList.add('visible');
+}
+function cancelFavEdit(){
+  clickPlay();
+  if(favourites.length>0){showFavView('saved');buildFavSaved();}
+  else closeModal('modal-fav');
+}
+function buildFavSaved(){
+  const list=document.getElementById('fav-saved-list');
+  list.innerHTML='';
+  if(favourites.length===0){list.innerHTML='<div style="color:var(--text-muted);font-size:9px;">No favourites yet.</div>';return;}
   favourites.forEach(f=>{
     const item=document.createElement('div');
-    item.className='fav-dd-item';
-    item.innerHTML=`
-      <img src="${f.img}" alt="">
-      <span class="fav-name">${f.lbl}</span>
-      <button class="fav-dd-play" onclick="launchFavDirect('${f.url.replace(/'/g,"\\'")}')">▶</button>
-    `;
+    item.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--input-bg);border:1px solid var(--input-border);';
+    item.innerHTML=`<span style="color:#f9a825;font-size:11px;">★</span><img src="${f.img}" style="width:18px;height:18px;object-fit:contain;image-rendering:pixelated;filter:none;" alt=""><span style="flex:1;font-size:9px;color:var(--text-muted);">${f.lbl}</span><button style="padding:4px 9px;font-family:var(--font);font-size:8px;border:1px solid var(--green);color:var(--green);background:rgba(90,173,90,0.1);cursor:pointer;" onclick="closeModal('modal-fav');launchUrl('${f.url.replace(/'/g,"\\'").replace(/"/g,'&quot;')}')">▶ PLAY</button>`;
     list.appendChild(item);
   });
 }
 
-function launchFavDirect(url){
-  clickPlay();
-  document.getElementById('fav-dd').classList.remove('open');
-  document.getElementById('launch-txt').innerHTML='Launching Eaglercraft,<br>be ready!';
-  document.getElementById('launch-overlay').classList.add('active');
-  setTimeout(()=>{
-    document.getElementById('launch-overlay').classList.remove('active');
-    if(newWin)window.open(url,'_blank');
-    else window.location.href=url;
-  },2400);
+function buildFavEdit(){
+  tempFavs=[...favourites.map(f=>({...f}))];
+  renderFavEditDropdowns();
 }
-
-function editFavourites(){
-  clickPlay();
-  document.getElementById('fav-dd').classList.remove('open');
-  tempFavs=favourites.map(f=>({...f}));
-  buildFavEditUI();
-  openModal('modal-edit-fav');
-}
-
-function buildFavEditUI(){
-  const container=document.getElementById('fav-edit-sections');
-  container.innerHTML='';
+let openFavDropdownEd=null;
+function renderFavEditDropdowns(){
+  const c=document.getElementById('fav-edit-content');
+  c.innerHTML='';
+  const labels={web:'WEB EDITION',modded:'MODDED EDITION',controls:'CONTROLS EDITION'};
+  const icons={web:'./images/i-web.png',modded:'./images/i-modded.png',controls:'./images/i-controls.png'};
   ['web','modded','controls'].forEach(ed=>{
-    const edLabel={web:'WEB EDITION',modded:'MODDED EDITION',controls:'CONTROLS EDITION'};
     const sec=document.createElement('div');
-    sec.style.cssText='padding:10px;border:1px solid var(--card-border);border-radius:4px;';
-    const title=document.createElement('div');
-    title.style.cssText='font-size:9px;color:var(--text-muted);margin-bottom:8px;font-weight:bold;';
-    title.textContent=edLabel[ed];
-    sec.appendChild(title);
-    const grid=document.createElement('div');
-    grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:4px;';
+    sec.style.marginBottom='8px';
+    const wrap=document.createElement('div');
+    wrap.className='fav-dd-wrap';
+
+    const head=document.createElement('button');
+    head.type='button';
+    head.className='fav-dd-head'+(openFavDropdownEd===ed?' open':'');
+    head.innerHTML=`<img src="${icons[ed]}" alt=""><span>${labels[ed]}</span><span class="arrow">${openFavDropdownEd===ed?'▲':'▼'}</span>`;
+    head.onclick=(ev)=>{
+      ev.stopPropagation();
+      clickPlay();
+      openFavDropdownEd=openFavDropdownEd===ed?null:ed;
+      renderFavEditDropdowns();
+    };
+    wrap.appendChild(head);
+
+    const list=document.createElement('div');
+    list.className='fav-dd-list'+(openFavDropdownEd===ed?' open':'');
     EDITIONS[ed].vers.forEach((v,i)=>{
-      const isSelected=tempFavs.some(f=>f.ed===ed&&f.verIdx===i);
+      const selected=tempFavs.some(f=>f.ed===ed&&f.verIdx===i);
       const opt=document.createElement('button');
-      opt.style.cssText=`padding:6px;font-size:8px;font-family:var(--font);background:${isSelected?'rgba(90,173,90,0.2)':'var(--input-bg)'};border:1px solid ${isSelected?'var(--green)':'var(--input-border)'};color:${isSelected?'var(--green)':'var(--text-muted)'};cursor:pointer;transition:all .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;`;
-      opt.textContent=(isSelected?'★ ':'')+v.lbl;
-      opt.onclick=()=>toggleFavEditOpt(opt,ed,i,v);
-      grid.appendChild(opt);
+      opt.type='button';
+      opt.className='fav-dd-item'+(selected?' selected':'');
+      opt.innerHTML=`<img src="${v.img}" alt=""><span>${v.lbl}</span><span class="star">★</span>`;
+      opt.onclick=(ev)=>{
+        ev.stopPropagation();
+        clickPlay();
+        toggleFavByEditionIndex(ed,i);
+        renderFavEditDropdowns();
+      };
+      list.appendChild(opt);
     });
-    sec.appendChild(grid);
-    container.appendChild(sec);
+    wrap.appendChild(list);
+    sec.appendChild(wrap);
+    c.appendChild(sec);
   });
 }
-
-function toggleFavEditOpt(opt,ed,i,v){
-  clickPlay();
-  const exists=tempFavs.findIndex(f=>f.ed===ed&&f.verIdx===i);
-  if(exists>=0){
-    tempFavs.splice(exists,1);
-    opt.style.background='var(--input-bg)';
-    opt.style.borderColor='var(--input-border)';
-    opt.style.color='var(--text-muted)';
-    opt.textContent=v.lbl;
-  }else{
-    tempFavs.push({ed,verIdx:i,lbl:v.lbl,img:v.img,url:v.url});
-    opt.style.background='rgba(90,173,90,0.2)';
-    opt.style.borderColor='var(--green)';
-    opt.style.color='var(--green)';
-    opt.textContent='★ '+v.lbl;
-  }
+function toggleFavByEditionIndex(ed,i){
+  const idx=tempFavs.findIndex(f=>f.ed===ed&&f.verIdx===i);
+  if(idx>=0){ tempFavs.splice(idx,1); return; }
+  const v=EDITIONS[ed].vers[i];
+  tempFavs.push({ed,verIdx:i,lbl:v.lbl,img:v.img,url:v.url});
 }
-
+document.addEventListener('click',()=>{
+  if(openFavDropdownEd!==null){
+    openFavDropdownEd=null;
+    const favEdit=document.getElementById('fav-view-edit');
+    if(favEdit&&favEdit.classList.contains('visible'))renderFavEditDropdowns();
+  }
+});
 function saveFavourites(){
   clickPlay();
   favourites=[...tempFavs];
-  if(currentUser&&accounts[currentUser]){
-    accounts[currentUser].favs=[...favourites];
-    saveAccounts();
-  }
+  persistFavs();
   buildDd(EDITIONS[curEd].vers);
-  updateFavDd();
-  closeModal('modal-edit-fav');
+  if(favourites.length>0){showFavView('saved');buildFavSaved();}
+  else closeModal('modal-fav');
 }
 
-/* init */
-document.getElementById('bg-dim').style.background=`rgba(0,0,0,${bgDim})`;
-setTimeout(positionMenus,100);
+_applyDim(settings.bgDim);
 </script>
-
 </body>
 </html>
